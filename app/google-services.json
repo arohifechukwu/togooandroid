@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "147695118015",
+    "project_id": "togoo-a70f2",
+    "storage_bucket": "togoo-a70f2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147695118015:android:3c0d2516919ad2f28f880a",
+        "android_client_info": {
+          "package_name": "com.example.togoo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzATiOskWK3dn0AtYV2n38ByLu9VdUJ-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

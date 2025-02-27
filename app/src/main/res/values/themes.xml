@@ -1,0 +1,43 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base Theme (Applies to Light & Dark Mode) -->
+    <style name="Base.Theme.Togoo" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryContainer">@color/primary_variant</item>
+        <item name="colorSecondary">@color/secondary_color</item>
+        <item name="colorOnPrimary">@color/black</item>
+
+        <!-- Status Bar & Window Background -->
+        <item name="android:statusBarColor">@color/primary_variant</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <!-- Buttons -->
+        <item name="colorButtonNormal">@color/button_default</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/dark_gray</item>
+    </style>
+
+    <!-- Light Theme -->
+    <style name="Theme.Togoo" parent="Base.Theme.Togoo">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorSurface">@color/light_gray</item>
+        <item name="colorOnSurface">@color/black</item>
+    </style>
+
+    <!-- Dark Theme -->
+    <style name="Theme.Togoo.Dark" parent="Base.Theme.Togoo">
+        <item name="android:windowBackground">@color/black</item>
+        <item name="colorSurface">@color/primary_variant</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="SplashTheme" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+</resources>

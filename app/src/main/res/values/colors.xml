@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="primary_color">#F18D34</color> <!-- Dark Orange -->
+    <color name="primary_variant">#E67E22</color> <!-- Slightly Darker Orange -->
+    <color name="secondary_color">#FF9800</color> <!-- Lighter Orange -->
+
+    <!-- Background & Text Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="dark_gray">#757575</color>
+    <color name="black">#000000</color>
+
+    <!-- Buttons & Highlights -->
+    <color name="button_default">#F18D34</color>
+    <color name="button_pressed">#E67E22</color>
+    <color name="button_disabled">#FFB066</color>
+</resources>
