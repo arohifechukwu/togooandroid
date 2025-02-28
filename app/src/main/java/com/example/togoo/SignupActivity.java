@@ -3,6 +3,7 @@ package com.example.togoo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,7 +27,7 @@ public class SignupActivity extends AppCompatActivity {
     private EditText inputName, inputEmail, inputPhone, inputAddress, inputPassword, inputConfirmPassword;
     private CheckBox termsCheckbox;
     private Button signupButton;
-    private TextView loginLink; // Added for login navigation
+    private TextView loginLink, passwordHint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,8 @@ public class SignupActivity extends AppCompatActivity {
         inputConfirmPassword = findViewById(R.id.inputConfirmPassword);
         termsCheckbox = findViewById(R.id.termsCheckbox);
         signupButton = findViewById(R.id.signupButton);
-        loginLink = findViewById(R.id.loginLink); // Initialize login link
+        loginLink = findViewById(R.id.loginLink);
+        passwordHint = findViewById(R.id.passwordHint);
 
         signupButton.setOnClickListener(v -> registerUser());
 
@@ -71,6 +73,16 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Enter a valid email address", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!isValidPassword(password)) {
+            Toast.makeText(this, "Password must be at least 6 characters, contain letters, numbers, and symbols", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
             return;
@@ -91,11 +103,23 @@ public class SignupActivity extends AppCompatActivity {
                         db.collection("users").document(uid).set(user)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show();
+
+                                    // Navigate to LoginActivity immediately after signup
+                                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish(); // Close SignupActivity
                                 })
-                                .addOnFailureListener(e -> Toast.makeText(this, "Signup failed!", Toast.LENGTH_SHORT).show());
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Signup failed! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
                     } else {
-                        Toast.makeText(this, "Signup failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Signup failed! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    // Validate password (At least 6 characters, alphanumeric, allows symbols)
+    private boolean isValidPassword(String password) {
+        return password.length() >= 6 && password.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{6,}$");
     }
 }
