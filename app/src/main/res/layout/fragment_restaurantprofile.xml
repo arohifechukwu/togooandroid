@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/back_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+
+        android:contentDescription="Back"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Profile Image -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/baseline_person_24"
+        android:scaleType="centerCrop"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
+       />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tap to change profile picture"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_gravity="center_horizontal"
+        android:padding="4dp"/>
+
+    <!-- Username -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/black"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/username_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:textSize="16sp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Email (Disabled) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/black"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:textSize="16sp"
+            android:enabled="false"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Phone Number -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/black"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phone_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:textSize="16sp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Update Profile Button -->
+    <Button
+        android:id="@+id/button_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update Profile"
+        android:backgroundTint="@color/primary_color"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>
