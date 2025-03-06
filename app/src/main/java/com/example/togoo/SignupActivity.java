@@ -56,6 +56,14 @@ public class SignupActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        // Navigate to RegistrationActivity when register business link is clicked
+        TextView registerBusinessLink = findViewById(R.id.registerBusinessLink);
+        registerBusinessLink.setOnClickListener(v -> {
+            Intent intent = new Intent(SignupActivity.this, RegistrationActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     private void registerUser() {

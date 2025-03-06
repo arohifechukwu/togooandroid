@@ -150,6 +150,20 @@
             android:layout_gravity="center"
             android:clickable="true"
             android:focusable="true"/>
+
+        <!-- Business Registration Link -->
+        <TextView
+            android:id="@+id/registerBusinessLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Are you a Driver or Restaurant? Register Here!"
+            android:textColor="@color/primary_color"
+            android:textStyle="bold"
+            android:paddingTop="10dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
