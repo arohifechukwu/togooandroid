@@ -190,11 +190,14 @@ public class RegistrationActivity extends AppCompatActivity {
                         user.put("address", inputAddress.getText().toString().trim());
                         user.put("role", businessType);
 
+                        // ✅ Set registration status as pending
+                        user.put("status", "pending");
+
                         // For each file field, if a file was selected, expectedUploads will be incremented;
                         // otherwise, we use the input text value and increment expectedUploads.
                         expectedUploads = 0;
                         // For drivers:
-                        if (businessType.equalsIgnoreCase("Driver")) {
+                        if (businessType.equalsIgnoreCase("driver")) {
                             // Driver's License
                             if (driverLicenseUri != null) {
                                 expectedUploads++;
@@ -219,7 +222,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                     updateUserRecord(userRef, user);
                                 }
                             }
-                        } else if (businessType.equalsIgnoreCase("Restaurant")) {
+                        } else if (businessType.equalsIgnoreCase("restaurant")) {
                             // Restaurant License
                             if (restaurantLicenseUri != null) {
                                 expectedUploads++;
@@ -294,18 +297,33 @@ public class RegistrationActivity extends AppCompatActivity {
         }
     }
 
+//    private void updateUserRecord(DatabaseReference userRef, Map<String, Object> user) {
+//        userRef.setValue(user).addOnCompleteListener(task -> {
+//            progressDialog.dismiss();
+//            if (task.isSuccessful()) {
+//                Toast.makeText(RegistrationActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
+//                startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+//                finish();
+//            } else {
+//                Toast.makeText(RegistrationActivity.this, "Registration update failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+
     private void updateUserRecord(DatabaseReference userRef, Map<String, Object> user) {
         userRef.setValue(user).addOnCompleteListener(task -> {
             progressDialog.dismiss();
             if (task.isSuccessful()) {
                 Toast.makeText(RegistrationActivity.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegistrationActivity.this, RegistrationStatusActivity.class));
                 finish();
             } else {
                 Toast.makeText(RegistrationActivity.this, "Registration update failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     private String getFileName(Uri uri) {
         String fileName = null;

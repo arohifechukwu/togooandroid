@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Home -->
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home"
+        android:tint="@color/primary_color" />
+
+    <!-- Restaurants -->
+    <item
+        android:id="@+id/navigation_restaurant"
+        android:icon="@drawable/ic_restaurant"
+        android:title="Restaurants"
+        android:tint="@color/primary_color" />
+
+    <!-- Browse -->
+    <item
+        android:id="@+id/navigation_browse"
+        android:icon="@drawable/ic_browse"
+        android:title="Browse"
+        android:tint="@color/primary_color" />
+
+    <!-- Orders -->
+    <item
+        android:id="@+id/navigation_order"
+        android:icon="@drawable/ic_order"
+        android:title="Order"
+        android:tint="@color/primary_color" />
+
+    <!-- Account -->
+    <item
+        android:id="@+id/navigation_account"
+        android:icon="@drawable/ic_account"
+        android:title="Account"
+        android:tint="@color/primary_color" />
+
+</menu>

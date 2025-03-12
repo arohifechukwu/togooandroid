@@ -22,23 +22,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignupActivity extends AppCompatActivity {
+public class AdminRegistrationActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private DatabaseReference dbReference;
     private EditText inputName, inputEmail, inputPhone, inputAddress, inputPassword, inputConfirmPassword;
     private CheckBox termsCheckbox;
     private Button signupButton;
-    private TextView loginLink, passwordHint;
-    private ProgressDialog progressDialog; // Added progress dialog
+    private TextView loginLink;
+    private ProgressDialog progressDialog; // Progress Dialog
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_admin_registration);
 
         auth = FirebaseAuth.getInstance();
-        dbReference = FirebaseDatabase.getInstance().getReference("customer"); // ✅ Realtime Database reference
+        dbReference = FirebaseDatabase.getInstance().getReference("admin"); // ✅ Admin Node
 
         inputName = findViewById(R.id.inputName);
         inputEmail = findViewById(R.id.inputEmail);
@@ -49,38 +49,21 @@ public class SignupActivity extends AppCompatActivity {
         termsCheckbox = findViewById(R.id.termsCheckbox);
         signupButton = findViewById(R.id.signupButton);
         loginLink = findViewById(R.id.loginLink);
-        passwordHint = findViewById(R.id.passwordHint);
 
-        // Initialize progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Registering..."); // ✅ Display before Firebase operations
+        progressDialog.setMessage("Registering...");
 
-        signupButton.setOnClickListener(v -> registerUser());
+        signupButton.setOnClickListener(v -> registerAdmin());
 
-        // Navigate to LoginActivity when login link is clicked
         loginLink.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+            Intent intent = new Intent(AdminRegistrationActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
-
-        // Navigate to RegistrationActivity when register business link is clicked
-        TextView registerBusinessLink = findViewById(R.id.registerBusinessLink);
-        registerBusinessLink.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, RegistrationActivity.class);
-            startActivity(intent);
-        });
-
-        // Navigate to Admin RegistrationActivity when register business link is clicked
-        TextView registerAdmin = findViewById(R.id.registerAdmin);
-        registerAdmin.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, AdminRegistrationActivity.class);
-            startActivity(intent);
-        });
     }
 
-    private void registerUser() {
+    private void registerAdmin() {
         String name = inputName.getText().toString().trim();
         String email = inputEmail.getText().toString().trim();
         String phone = inputPhone.getText().toString().trim();
@@ -110,45 +93,42 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
-        // Show the "Registering..." progress dialog
         progressDialog.show();
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         String uid = auth.getCurrentUser().getUid();
-                        DatabaseReference userRef = dbReference.child(uid); // ✅ Writing under "customer/{uid}"
+                        DatabaseReference adminRef = dbReference.child(uid); // ✅ Save under "admin/{uid}"
 
-                        Map<String, Object> user = new HashMap<>();
-                        user.put("name", name);
-                        user.put("email", email);
-                        user.put("phone", phone);
-                        user.put("address", address);
-                        user.put("role", "customer");
-                        user.put("createdAt", System.currentTimeMillis()); // ✅ Using timestamp for Realtime Database
+                        Map<String, Object> admin = new HashMap<>();
+                        admin.put("name", name);
+                        admin.put("email", email);
+                        admin.put("phone", phone);
+                        admin.put("address", address);
+                        admin.put("role", "admin");
+                        admin.put("createdAt", System.currentTimeMillis()); // ✅ Timestamp
 
-                        userRef.setValue(user)
+                        adminRef.setValue(admin)
                                 .addOnSuccessListener(aVoid -> {
-                                    progressDialog.dismiss(); // ✅ Hide progress dialog
-                                    Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                    Toast.makeText(this, "Admin registration successful!", Toast.LENGTH_SHORT).show();
 
-                                    // Navigate to LoginActivity immediately after signup
-                                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                                    Intent intent = new Intent(AdminRegistrationActivity.this, AdminLandingActivity.class);
                                     startActivity(intent);
-                                    finish(); // Close SignupActivity
+                                    finish();
                                 })
                                 .addOnFailureListener(e -> {
-                                    progressDialog.dismiss(); // ✅ Hide progress dialog on failure
-                                    Toast.makeText(this, "Signup failed! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                    Toast.makeText(this, "Registration failed! " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 });
                     } else {
-                        progressDialog.dismiss(); // ✅ Hide progress dialog on failure
+                        progressDialog.dismiss();
                         Toast.makeText(this, "Signup failed! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // Validate password (At least 6 characters, alphanumeric, allows symbols)
     private boolean isValidPassword(String password) {
         return password.length() >= 6 && password.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{6,}$");
     }

@@ -13,10 +13,49 @@
         android:theme="@style/Theme.Togoo"
         tools:targetApi="31">
         <activity
+            android:name=".AdminRegistrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TransactionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ApprovalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistrationStatusActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
         <activity
             android:name=".RestaurantLandingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LocationSelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FoodSearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RestaurantActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BrowseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AccountActivity"
             android:exported="false" />
         <activity
             android:name=".AdminLandingActivity"

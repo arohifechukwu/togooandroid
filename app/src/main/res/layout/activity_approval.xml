@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdminLandingActivity"
-    android:background="@color/light_gray">
+    android:background="@color/light_gray"
+    tools:context=".ApprovalActivity">
 
-    <!-- Admin Title -->
     <TextView
         android:id="@+id/adminTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Admin Dashboard"
+        android:text="Pending Approvals"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -21,30 +19,27 @@
         android:background="@color/primary_color"
         android:textColor="@color/white" />
 
-    <!-- "No Records Found" Text (Initially Hidden) -->
     <TextView
-        android:id="@+id/noRecordsText"
+        android:id="@+id/noApprovalsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No records found"
+        android:text="No pending approvals."
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/dark_gray"
         android:gravity="center"
         android:visibility="gone"
         android:layout_below="@id/adminTitle"
-        android:layout_centerHorizontal="true"
-        android:padding="20dp" />
+        android:padding="20dp"/>
 
-    <!-- RecyclerView for Approved Users -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/usersRecyclerView"
+        android:id="@+id/approvalsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/adminTitle"
         android:padding="10dp"
         android:clipToPadding="false"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"/>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -56,4 +51,5 @@
         app:itemTextColor="@color/primary_color"
         app:menu="@menu/admin_bottom_navigation_menu"
         android:background="@color/white"/>
+
 </RelativeLayout>

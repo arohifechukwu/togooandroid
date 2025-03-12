@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="business_types">
-        <item>Restaurant</item>
-        <item>Driver</item>
+        <item>restaurant</item>
+        <item>driver</item>
+        <item>admin</item>
     </string-array>
 </resources>
