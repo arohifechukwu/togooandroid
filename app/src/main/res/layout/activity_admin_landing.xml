@@ -36,15 +36,28 @@
         android:layout_centerHorizontal="true"
         android:padding="20dp" />
 
-    <!-- RecyclerView for Approved Users -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/usersRecyclerView"
+    <!-- Material CardView for RecyclerView -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:layout_below="@id/adminTitle"
-        android:padding="10dp"
-        android:clipToPadding="false"
-        android:scrollbars="vertical" />
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:strokeColor="@color/primary_variant"
+        app:strokeWidth="1dp"
+        android:backgroundTint="@color/white">
+
+        <!-- RecyclerView for Approved Users -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/usersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

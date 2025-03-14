@@ -13,16 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.*;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private DatabaseReference dbReference; // ✅ Switched to Realtime Database
+    private DatabaseReference dbReference;
     private EditText inputEmail, inputPassword;
     private Button loginButton;
     private TextView signupLink, forgotPasswordLink;
@@ -33,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
-        dbReference = FirebaseDatabase.getInstance().getReference(); // ✅ Reference to Realtime Database root
+        dbReference = FirebaseDatabase.getInstance().getReference();
 
         inputEmail = findViewById(R.id.inputEmail);
         inputPassword = findViewById(R.id.inputPassword);
@@ -43,13 +40,11 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(v -> loginUser());
 
-        // Navigate to SignupActivity
         signupLink.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
             startActivity(intent);
         });
 
-        // Navigate to PasswordResetActivity
         forgotPasswordLink.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, PasswordResetActivity.class);
             startActivity(intent);
@@ -68,66 +63,52 @@ public class LoginActivity extends AppCompatActivity {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        String uid = auth.getCurrentUser().getUid();
-                        validateUserRole(uid);
+                        FirebaseUser currentUser = auth.getCurrentUser();
+                        if (currentUser != null) {
+                            String uid = currentUser.getUid();
+                            validateUserRole(uid);
+                        } else {
+                            Toast.makeText(this, "Account does not exist", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(this, "Login failed! Check credentials.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-//    private void validateUserRole(String uid) {
-//        // ✅ Check each node for the user role
-//        checkUserRoleInNode("customer", uid);
-//    }
-//
-//    private void checkUserRoleInNode(String node, String uid) {
-//        dbReference.child(node).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists() && snapshot.child("role").getValue() != null) {
-//                    String role = snapshot.child("role").getValue(String.class);
-//                    navigateToDashboard(role);
-//                } else {
-//                    // If not found in "customer", check in "driver"
-//                    if ("customer".equals(node)) checkUserRoleInNode("driver", uid);
-//                    else if ("driver".equals(node)) checkUserRoleInNode("restaurant", uid);
-//                    else if ("restaurant".equals(node)) checkUserRoleInNode("admin", uid);
-//                    else Toast.makeText(LoginActivity.this, "User role not found!", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(LoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
-
+    /**
+     * ✅ Validate User Role and Handle Status Changes
+     */
     private void validateUserRole(String uid) {
-        checkUserRoleInNode("customer", uid);
+        // Check if user exists in Firebase Authentication before checking Realtime Database
+        dbReference.child("customer").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    handleUserStatus(snapshot, uid);
+                } else {
+                    // Check in other nodes
+                    checkUserRoleInNode("driver", uid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(LoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void checkUserRoleInNode(String node, String uid) {
         dbReference.child(node).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && snapshot.child("role").getValue() != null) {
-                    String role = snapshot.child("role").getValue(String.class);
-                    String status = snapshot.child("status").exists() ? snapshot.child("status").getValue(String.class) : "approved";
-
-                    if ("pending".equals(status)) {
-                        startActivity(new Intent(LoginActivity.this, RegistrationStatusActivity.class));
-                        finish();
-                        return;
-                    }
-
-                    navigateToDashboard(role);
+                if (snapshot.exists()) {
+                    handleUserStatus(snapshot, uid);
                 } else {
-                    if ("customer".equals(node)) checkUserRoleInNode("driver", uid);
-                    else if ("driver".equals(node)) checkUserRoleInNode("restaurant", uid);
+                    if ("driver".equals(node)) checkUserRoleInNode("restaurant", uid);
                     else if ("restaurant".equals(node)) checkUserRoleInNode("admin", uid);
+                    else if ("admin".equals(node)) checkAdminAccess(uid);
                     else Toast.makeText(LoginActivity.this, "User role not found!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -139,6 +120,57 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * ✅ Handle Different Account Statuses
+     */
+    private void handleUserStatus(DataSnapshot snapshot, String uid) {
+        String role = snapshot.child("role").getValue(String.class);
+        String status = snapshot.child("status").exists() ? snapshot.child("status").getValue(String.class) : "approved";
+
+        if ("suspended".equals(status)) {
+            Toast.makeText(LoginActivity.this, "Account Suspended. Contact Administrator", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if ("deleted".equals(status)) {
+            auth.signOut(); // Ensure user is signed out
+            Toast.makeText(LoginActivity.this, "Account does not exist", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if ("pending".equals(status)) {
+            startActivity(new Intent(LoginActivity.this, RegistrationStatusActivity.class));
+            finish();
+            return;
+        }
+
+        navigateToDashboard(role);
+    }
+
+    /**
+     * ✅ Admin Role Validation
+     */
+    private void checkAdminAccess(String uid) {
+        dbReference.child("admin").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists() && "admin".equals(snapshot.child("role").getValue(String.class))) {
+                    navigateToDashboard("admin");
+                } else {
+                    Toast.makeText(LoginActivity.this, "Access Denied: Not an Admin", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(LoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * ✅ Navigate User Based on Role
+     */
     private void navigateToDashboard(String role) {
         Intent intent;
         switch (role) {
