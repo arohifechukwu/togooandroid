@@ -6,18 +6,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.togoo.adapters.AdminUserAdapter;
 import com.example.togoo.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +43,12 @@ public class AdminLandingActivity extends AppCompatActivity {
 
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         userList = new ArrayList<>();
-        userAdapter = new AdminUserAdapter(userList, this, false); // ✅ Include third parameter
+        userAdapter = new AdminUserAdapter(userList, this, false);
         usersRecyclerView.setAdapter(userAdapter);
 
         validateAdminAccess();
 
+        // Ensure navigation bar items are styled properly
         bottomNavigationView.setSelectedItemId(R.id.navigation_home);
         bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
@@ -102,7 +100,7 @@ public class AdminLandingActivity extends AppCompatActivity {
                         User user = userSnapshot.getValue(User.class);
                         if (user != null) {
                             String status = userSnapshot.child("status").getValue(String.class);
-                            if ("approved".equals(status)) { // ✅ Show only approved users
+                            if ("approved".equals(status)) {
                                 user.setUserId(userSnapshot.getKey());
                                 userList.add(user);
                             }
@@ -137,19 +135,21 @@ public class AdminLandingActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.navigation_users) {
             startActivity(new Intent(this, UserActivity.class));
+            finish();
             return true;
         } else if (id == R.id.navigation_approvals) {
             startActivity(new Intent(this, ApprovalActivity.class));
+            finish();
             return true;
         } else if (id == R.id.navigation_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+            finish();
             return true;
         } else if (id == R.id.navigation_transaction) {
             startActivity(new Intent(this, TransactionActivity.class));
+            finish();
             return true;
         }
         return false;
     }
 }
-
-

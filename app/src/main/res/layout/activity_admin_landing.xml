@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,7 +18,7 @@
         android:gravity="center"
         android:padding="16dp"
         android:background="@color/primary_color"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"/>
 
     <!-- "No Records Found" Text (Initially Hidden) -->
     <TextView
@@ -34,7 +33,7 @@
         android:visibility="gone"
         android:layout_below="@id/adminTitle"
         android:layout_centerHorizontal="true"
-        android:padding="20dp" />
+        android:padding="20dp"/>
 
     <!-- Material CardView for RecyclerView -->
     <com.google.android.material.card.MaterialCardView
@@ -42,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:layout_below="@id/adminTitle"
+        android:layout_above="@id/bottomNavigation"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         app:strokeColor="@color/primary_variant"
@@ -55,18 +55,18 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:clipToPadding="false"
-            android:scrollbars="vertical" />
-
+            android:scrollbars="vertical"/>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation (Fixed at the Bottom) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:itemIconTint="@color/primary_color"
-        app:itemTextColor="@color/primary_color"
-        app:menu="@menu/admin_bottom_navigation_menu"
-        android:background="@color/white"/>
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/dark_gray"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/admin_bottom_navigation_menu"/>
 </RelativeLayout>

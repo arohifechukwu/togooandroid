@@ -46,6 +46,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         User user = userList.get(position);
         holder.userName.setText(user.getName());
         holder.userEmail.setText(user.getEmail());
+        holder.userRole.setText(user.getRole());
         holder.userStatus.setText("Status: " + user.getStatus());
 
         String userNode = user.getRole(); // Fetch node dynamically (customer, driver, restaurant)
@@ -136,13 +137,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView userName, userEmail, userStatus;
+        TextView userName, userEmail, userRole, userStatus;
         Button suspendButton, reactivateButton, deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.userName);
             userEmail = itemView.findViewById(R.id.userEmail);
+            userRole = itemView.findViewById(R.id.userRole);
             userStatus = itemView.findViewById(R.id.userStatus);
             suspendButton = itemView.findViewById(R.id.suspendButton);
             reactivateButton = itemView.findViewById(R.id.reactivateButton);
