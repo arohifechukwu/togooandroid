@@ -37,18 +37,6 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <!-- Food Category -->
-        <TextView
-            android:id="@+id/foodCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Category"
-            android:textColor="@color/primary_variant"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:background="@drawable/category_tag_bg"
-            android:padding="4dp"/>
 
         <!-- Food Description -->
         <TextView
@@ -75,7 +63,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="$9.99"
-                android:textColor="@color/primary_variant"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -83,7 +71,7 @@
                 android:id="@+id/addToCart"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/rounded_circle"
+
                 android:padding="8dp"
                 android:src="@drawable/ic_add_to_cart"
                 android:contentDescription="Add to Cart"/>

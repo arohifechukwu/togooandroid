@@ -42,12 +42,15 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FoodItem food = foodList.get(position);
-        holder.foodName.setText(food.getName());
+
+        // Correcting Name Retrieval (Now Uses UID Instead of Description)
+        holder.foodName.setText(food.getId()); // Fetches UID as Name (e.g., "Apple Pie")
+        holder.foodDescription.setText(food.getDescription()); // Correctly Displays Description
         holder.foodPrice.setText("$" + food.getPrice());
 
+        // Load Image with Glide
         Glide.with(context)
-                .load(food.getImageUrl())
-                .placeholder(R.drawable.ic_food_placeholder)
+                .load(food.getImageUrl() != null ? food.getImageUrl() : R.drawable.ic_food_placeholder)
                 .into(holder.foodImage);
 
         holder.itemView.setOnClickListener(v -> listener.onFoodClick(food));
@@ -60,12 +63,13 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView foodImage;
-        TextView foodName, foodPrice;
+        TextView foodName, foodDescription, foodPrice;
 
         public ViewHolder(View itemView) {
             super(itemView);
             foodImage = itemView.findViewById(R.id.foodImage);
             foodName = itemView.findViewById(R.id.foodName);
+            foodDescription = itemView.findViewById(R.id.foodDescription); // Added Description
             foodPrice = itemView.findViewById(R.id.foodPrice);
         }
     }

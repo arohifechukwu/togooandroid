@@ -45,6 +45,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-database:20.0.5")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.firebase.functions)
+    implementation(libs.play.services.location)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation(libs.appcompat)
     implementation(libs.material)

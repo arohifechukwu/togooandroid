@@ -8,13 +8,14 @@ public class User {
     private String address;
     private String role;
     private String status; // Pending or Approved
+    private String imageURL; // Profile Picture
 
     // Default constructor (needed for Firebase)
     public User() {
     }
 
     // Constructor with parameters
-    public User(String userId, String name, String email, String phone, String address, String role, String status) {
+    public User(String userId, String name, String email, String phone, String address, String role, String status, String imageURL) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -22,6 +23,7 @@ public class User {
         this.address = address;
         this.role = role;
         this.status = status;
+        this.imageURL = imageURL;
     }
 
     // Getter and Setter Methods
@@ -80,5 +82,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }
