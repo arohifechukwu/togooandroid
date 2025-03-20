@@ -22,7 +22,7 @@ public class AccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Load theme preference before setting content view
+
         SharedPreferences sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE);
         boolean isDarkMode = sharedPreferences.getBoolean("darkMode", false);
         if (isDarkMode) {
@@ -33,7 +33,7 @@ public class AccountActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_account);
 
-        // Initialize UI components
+
         profileCard = findViewById(R.id.cardProfile);
         notificationsCard = findViewById(R.id.cardNotifications);
         aboutUsCard = findViewById(R.id.cardAboutUs);
@@ -43,10 +43,10 @@ public class AccountActivity extends AppCompatActivity {
         themeSwitch = findViewById(R.id.switchTheme);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // Set switch position based on preference
+
         themeSwitch.setChecked(isDarkMode);
 
-        // Navigate to different activities
+
         profileCard.setOnClickListener(view -> {
             startActivity(new Intent(this, ProfileActivity.class));
             overridePendingTransition(0, 0);
@@ -72,12 +72,12 @@ public class AccountActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
         });
 
-        // ✅ Logout functionality
+
         logoutCard.setOnClickListener(view -> {
             logoutUser();
         });
 
-        // Theme toggle functionality
+
         themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("darkMode", isChecked);
@@ -87,29 +87,27 @@ public class AccountActivity extends AppCompatActivity {
             recreate();
         });
 
-        // Bottom Navigation setup
+
         bottomNavigationView.setSelectedItemId(R.id.navigation_account);
         bottomNavigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
-    /**
-     * ✅ Logs out the user by clearing session and navigating to LoginActivity.
-     */
+
     private void logoutUser() {
-        // Clear user session from SharedPreferences
+
         SharedPreferences preferences = getSharedPreferences("UserSession", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear(); // Remove all stored user data
         editor.apply();
 
-        // Navigate to LoginActivity and clear back stack
+
         Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish(); // Close current activity
     }
 
-    // Corrected method signature
+
     private boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId(); // Get the ID of the selected item
 
