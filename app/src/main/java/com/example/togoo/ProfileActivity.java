@@ -43,11 +43,11 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Initialize Firebase
+
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         storageRef = FirebaseStorage.getInstance().getReference("ProfilePictures");
 
-        // Initialize UI components
+
         profileImage = findViewById(R.id.profileImage);
         btnUploadImage = findViewById(R.id.btnUploadImage);
         nameInput = findViewById(R.id.nameInput);
@@ -56,20 +56,20 @@ public class ProfileActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.emailInput);
         btnSave = findViewById(R.id.btnSave);
 
-        // Disable email editing
+
         emailInput.setEnabled(false);
 
-        // 🔹 Search all user roles for logged-in user
+
         findUserRoleAndLoadData();
 
-        // Handle Image Upload
+
         btnUploadImage.setOnClickListener(v -> selectImage());
 
-        // Save Updated User Data
+
         btnSave.setOnClickListener(v -> uploadImageToFirebase());
     }
 
-    // 🔹 Search all roles (driver, customer, admin, restaurant) to find user
+
     private void findUserRoleAndLoadData() {
         String[] roles = {"driver", "customer", "admin", "restaurant"};
         for (String role : roles) {
@@ -93,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    // 🔹 Load user data from Firebase
+
     private void loadUserData() {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -106,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
                         phoneInput.setText(user.getPhone());
                         emailInput.setText(user.getEmail());
 
-                        // Load profile image using Glide
+
                         if (!TextUtils.isEmpty(user.getImageURL())) {
                             Glide.with(ProfileActivity.this)
                                     .load(user.getImageURL())
@@ -124,14 +124,14 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    // 🔹 Select an image from the device
+
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, 100);
     }
 
-    // 🔹 Handle image selection result
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -141,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    // 🔹 Upload Image to Firebase Storage
+
     private void uploadImageToFirebase() {
         if (imageUri != null) {
             ProgressDialog progressDialog = new ProgressDialog(this);
@@ -164,11 +164,11 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         } else {
-            updateUserData(); // Save data even if image isn't changed
+            updateUserData();
         }
     }
 
-    // 🔹 Update user data in Firebase
+
     private void updateUserData() {
         String name = nameInput.getText().toString().trim();
         String address = addressInput.getText().toString().trim();
