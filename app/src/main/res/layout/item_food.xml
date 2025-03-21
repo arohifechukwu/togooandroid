@@ -37,7 +37,6 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-
         <!-- Food Description -->
         <TextView
             android:id="@+id/foodDescription"
@@ -50,13 +49,15 @@
             android:maxLines="2"
             android:ellipsize="end" />
 
-        <!-- Price & Add to Cart -->
+        <!-- Price, Add to Cart, and Buy Now -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="6dp">
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical">
 
+            <!-- Price -->
             <TextView
                 android:id="@+id/foodPrice"
                 android:layout_width="0dp"
@@ -67,18 +68,27 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
+            <!-- Buy Now Button -->
+            <ImageView
+                android:id="@+id/btnBuy"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_buy"
+                android:contentDescription="Buy Now"
+                android:layout_marginLeft="8dp"/>
+
+            <!-- Add to Cart Button -->
             <ImageView
                 android:id="@+id/addToCart"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-
                 android:padding="8dp"
                 android:src="@drawable/ic_add_to_cart"
                 android:contentDescription="Add to Cart"/>
+
         </LinearLayout>
 
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
-
-

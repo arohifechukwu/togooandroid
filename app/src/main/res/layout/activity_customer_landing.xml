@@ -42,8 +42,8 @@
 
                 <ImageButton
                     android:id="@+id/cartButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_margin="8dp"
                     android:background="@color/white"
                     android:scaleType="centerInside"
@@ -58,13 +58,27 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:endIconMode="clear_text">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/searchBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Search menu..."
-                    android:inputType="text" />
+                    android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 🔹 Search Suggestions Dropdown -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchSuggestionsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:background="@color/white"
+                android:elevation="4dp"
+                android:padding="4dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"/>
 
             <!-- Featured Categories Section -->
             <TextView

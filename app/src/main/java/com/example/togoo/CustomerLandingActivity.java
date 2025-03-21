@@ -3,9 +3,13 @@ package com.example.togoo;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -22,12 +26,19 @@ import com.example.togoo.adapters.FoodAdapter;
 import com.example.togoo.models.FoodCategory;
 import com.example.togoo.models.FoodItem;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomerLandingActivity extends AppCompatActivity {
 
@@ -67,12 +78,14 @@ public class CustomerLandingActivity extends AppCompatActivity {
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* no-op */ }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!s.toString().trim().isEmpty()) {
                     searchMenuItems(s.toString().trim());
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) { /* no-op */ }
         });
@@ -86,6 +99,7 @@ public class CustomerLandingActivity extends AppCompatActivity {
     }
 
     // 🔹 Fetch Customer Location
+
     private void fetchCustomerLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -95,14 +109,87 @@ public class CustomerLandingActivity extends AppCompatActivity {
             return;
         }
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location != null) {
-                String locStr = "Lat: " + location.getLatitude() + ", Lng: " + location.getLongitude();
-                locationText.setText(locStr);
-            } else {
-                locationText.setText("Location Unavailable");
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) // Forces GPS for accuracy
+                .setInterval(5000) // Updates every 5 seconds
+                .setFastestInterval(2000);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null || locationResult.getLastLocation() == null) return;
+
+                double latitude = locationResult.getLastLocation().getLatitude();
+                double longitude = locationResult.getLastLocation().getLongitude();
+
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    updateUserLocation(currentUser.getUid(), latitude, longitude);
+                }
+
+                // Convert latitude & longitude to a readable address
+                String locationName = getAddressFromCoordinates(latitude, longitude);
+                locationText.setText(locationName);
             }
-        });
+        };
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
+
+    private void updateUserLocation(String userId, double latitude, double longitude) {
+        if (userId == null || userId.isEmpty()) {
+            Log.e("FirebaseError", "Invalid user ID.");
+            return;
+        }
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        String[] userTypes = {"customer", "admin", "restaurant", "driver"};
+
+        // Loop through each role to find where the user exists
+        for (String userType : userTypes) {
+            DatabaseReference userRef = rootRef.child(userType).child(userId);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        // Update location in the correct node
+                        DatabaseReference locationRef = userRef.child("location");
+                        locationRef.child("Latitude").setValue(latitude);
+                        locationRef.child("Longitude").setValue(longitude)
+                                .addOnSuccessListener(aVoid -> Log.d("FirebaseSuccess", "Location updated for " + userType))
+                                .addOnFailureListener(e -> Log.e("FirebaseError", "Failed to update location: " + e.getMessage()));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("FirebaseError", "Failed to check user role: " + error.getMessage());
+                }
+            });
+        }
+    }
+
+
+    private String getAddressFromCoordinates(double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                return addresses.get(0).getLocality(); // Returns city name (e.g., Montreal)
+            } else {
+                // Retry once after a small delay
+                Thread.sleep(1000);
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                if (addresses != null && !addresses.isEmpty()) {
+                    return addresses.get(0).getLocality();
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            Log.e("GeocoderError", "Error fetching address: " + e.getMessage());
+        }
+        return "Unknown Location";
     }
 
     // 🔹 Search Menu Items in Firebase
@@ -132,11 +219,12 @@ public class CustomerLandingActivity extends AppCompatActivity {
     }
 
     // 🔹 Set up RecyclerViews
-    // 🔹 Set up RecyclerViews
     private void setupRecyclerViews() {
         featuredCategoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         featuredCategoriesRecyclerView.setAdapter(new FoodCategoryAdapter(this, getFeaturedCategories(), category -> {
-            // Handle category click (navigate to category-specific menu)
+            Intent intent = new Intent(CustomerLandingActivity.this, FeaturedCategoryActivity.class);
+            intent.putExtra("selectedCategory", getSearchKeyword(category.getName()));
+            startActivity(intent);
         }));
 
         specialOffersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -149,15 +237,29 @@ public class CustomerLandingActivity extends AppCompatActivity {
     // 🔹 Generate Featured Categories
     private List<FoodCategory> getFeaturedCategories() {
         List<FoodCategory> categories = new ArrayList<>();
-        categories.add(new FoodCategory("Pizza 🍕", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("Burgers 🍔", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("Sushi 🍣", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("Pasta 🍝", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("Fried Chicken 🍗", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("BBQ & Grilled 🍖", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("Tacos 🌮", R.drawable.ic_food_category_placeholder));
-        categories.add(new FoodCategory("Sandwiches & Subs 🥪", R.drawable.ic_food_category_placeholder));
+        categories.add(new FoodCategory("Pizza", R.drawable.pizza));
+        categories.add(new FoodCategory("Burgers", R.drawable.burger));
+        categories.add(new FoodCategory("Sushi", R.drawable.sushi));
+        categories.add(new FoodCategory("Pasta", R.drawable.spaghetti));
+        categories.add(new FoodCategory("Seafood", R.drawable.shrimp));
+        categories.add(new FoodCategory("Salads", R.drawable.salad));
+        categories.add(new FoodCategory("Tacos", R.drawable.tacos));
+        categories.add(new FoodCategory("Desserts", R.drawable.cupcake));
         return categories;
+    }
+
+    private String getSearchKeyword(String categoryName) {
+        switch (categoryName) {
+            case "Pizza": return "Pizza";
+            case "Burgers": return "Burgers";
+            case "Sushi": return "Sushi";
+            case "Pasta": return "Pasta";
+            case "Seafood": return "Seafood";
+            case "Salads": return "Salads";
+            case "Tacos": return "Tacos";
+            case "Desserts": return "Desserts";
+            default: return "";
+        }
     }
 
     private void fetchTopPicks() {
@@ -198,7 +300,6 @@ public class CustomerLandingActivity extends AppCompatActivity {
         });
     }
 
-
     private void fetchSpecialOffers() {
         dbReference.child("restaurant").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -237,7 +338,6 @@ public class CustomerLandingActivity extends AppCompatActivity {
             }
         });
     }
-
 
 // 🔹 Handle Bottom Navigation Clicks (Java 11 Fix)
 

@@ -7,26 +7,17 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/categoryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Cart"
+        android:text="Featured Category"
         android:textSize="22sp"
         android:textStyle="bold"
         android:paddingBottom="10dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cartRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:overScrollMode="never"/>
-
-    <Button
-        android:id="@+id/btnBuyNow"
+        android:id="@+id/featuredCategoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Buy Now"
-        android:backgroundTint="@android:color/holo_green_dark"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="10dp"/>
+        android:overScrollMode="never"/>
 </LinearLayout>

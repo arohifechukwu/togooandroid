@@ -1,19 +1,27 @@
 package com.example.togoo.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.togoo.CheckoutActivity;
 import com.example.togoo.R;
+import com.example.togoo.models.CartItem;
 import com.example.togoo.models.FoodItem;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
@@ -43,17 +51,23 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         FoodItem food = foodList.get(position);
 
-        // Correcting Name Retrieval (Now Uses UID Instead of Description)
-        holder.foodName.setText(food.getId()); // Fetches UID as Name (e.g., "Apple Pie")
-        holder.foodDescription.setText(food.getDescription()); // Correctly Displays Description
+        // Display data – using food.getId() as the displayed name
+        holder.foodName.setText(food.getId());
+        holder.foodDescription.setText(food.getDescription());
         holder.foodPrice.setText("$" + food.getPrice());
 
-        // Load Image with Glide
         Glide.with(context)
                 .load(food.getImageUrl() != null ? food.getImageUrl() : R.drawable.ic_food_placeholder)
                 .into(holder.foodImage);
 
+        // Item click listener
         holder.itemView.setOnClickListener(v -> listener.onFoodClick(food));
+
+        // Add to Cart button
+        holder.btnAddToCart.setOnClickListener(v -> addToCart(food));
+
+        // Buy Now button – immediately move item to CheckoutActivity
+        holder.btnBuy.setOnClickListener(v -> buyNow(food));
     }
 
     @Override
@@ -62,15 +76,48 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView foodImage;
+        ImageView foodImage, btnAddToCart, btnBuy;
         TextView foodName, foodDescription, foodPrice;
 
         public ViewHolder(View itemView) {
             super(itemView);
             foodImage = itemView.findViewById(R.id.foodImage);
             foodName = itemView.findViewById(R.id.foodName);
-            foodDescription = itemView.findViewById(R.id.foodDescription); // Added Description
+            foodDescription = itemView.findViewById(R.id.foodDescription);
             foodPrice = itemView.findViewById(R.id.foodPrice);
+            btnAddToCart = itemView.findViewById(R.id.addToCart);
+            btnBuy = itemView.findViewById(R.id.btnBuy);
         }
+    }
+
+    // Add Food Item to Firebase Cart
+    // 🔹 Add Food Item to Firebase Cart using push()
+    private void addToCart(FoodItem food) {
+        DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                .getReference("cart")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        // Create a new CartItem (quantity initially 1)
+        CartItem cartItem = new CartItem(food.getId(), food.getDescription(), food.getImageUrl(), food.getPrice(), 1);
+
+        // Use push() to add a new entry so each duplicate gets its own unique key
+        DatabaseReference newItemRef = cartRef.push();
+        newItemRef.setValue(cartItem).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(context, "Added to Cart!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Failed to Add to Cart", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Buy Now: move the item directly to CheckoutActivity
+    private void buyNow(FoodItem food) {
+        List<CartItem> checkoutItems = new ArrayList<>();
+        checkoutItems.add(new CartItem(food.getId(), food.getDescription(), food.getImageUrl(), food.getPrice(), 1));
+
+        Intent intent = new Intent(context, CheckoutActivity.class);
+        intent.putParcelableArrayListExtra("cartItems", new ArrayList<>(checkoutItems));
+        context.startActivity(intent);
     }
 }
