@@ -59,7 +59,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
     }
 
     private void approveUser(User user) {
-        dbReference.child(user.getRole()).child(user.getUserId()).child("status").setValue("approved");
+        dbReference.child(user.getRole().toLowerCase()).child(user.getUserId()).child("status").setValue("approved"); // Convert role to lowercase
         userList.remove(user);
         notifyDataSetChanged();
     }
