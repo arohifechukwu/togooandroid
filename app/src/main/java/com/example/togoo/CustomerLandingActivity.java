@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,13 +45,14 @@ public class CustomerLandingActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    private TextView locationText;
+    private TextView locationText, viewResultsButton;
     private ImageButton cartButton;
     private EditText searchBar;
-    private RecyclerView featuredCategoriesRecyclerView, specialOffersRecyclerView, topPicksRecyclerView;
+    private RecyclerView featuredCategoriesRecyclerView, specialOffersRecyclerView, topPicksRecyclerView, searchSuggestionsRecyclerView;
     private FusedLocationProviderClient fusedLocationClient;
     private BottomNavigationView bottomNavigation;
     private DatabaseReference dbReference;
+    private FoodAdapter searchAdapter; // Adapter for suggestions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,33 @@ public class CustomerLandingActivity extends AppCompatActivity {
         bottomNavigation = findViewById(R.id.bottomNavigation);
         dbReference = FirebaseDatabase.getInstance().getReference();
 
+        // Initialize existing UI components
+        locationText = findViewById(R.id.locationText);
+        cartButton = findViewById(R.id.cartButton);
+        searchBar = findViewById(R.id.searchBar);
+        featuredCategoriesRecyclerView = findViewById(R.id.featuredCategoriesRecyclerView);
+        specialOffersRecyclerView = findViewById(R.id.specialOffersRecyclerView);
+        topPicksRecyclerView = findViewById(R.id.topPicksRecyclerView);
+        bottomNavigation = findViewById(R.id.bottomNavigation);
+        dbReference = FirebaseDatabase.getInstance().getReference();
+
+        // Initialize the new search suggestions UI elements
+        searchSuggestionsRecyclerView = findViewById(R.id.searchSuggestionsRecyclerView);
+        viewResultsButton = findViewById(R.id.viewResultsButton);
+        searchAdapter = new FoodAdapter(this, new ArrayList<>(), foodItem -> {
+            // Open FoodDetailActivity when a suggestion is clicked
+            Intent intent = new Intent(CustomerLandingActivity.this, FoodDetailActivity.class);
+            intent.putExtra("foodId", foodItem.getId());
+            intent.putExtra("foodDescription", foodItem.getDescription());
+            intent.putExtra("foodImage", foodItem.getImageUrl());
+            intent.putExtra("foodPrice", foodItem.getPrice());
+            startActivity(intent);
+        });
+        searchSuggestionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        searchSuggestionsRecyclerView.setAdapter(searchAdapter);
+        searchSuggestionsRecyclerView.setVisibility(View.GONE);
+        viewResultsButton.setVisibility(View.GONE);
+
         // Initialize location client and fetch location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fetchCustomerLocation();
@@ -74,21 +103,24 @@ public class CustomerLandingActivity extends AppCompatActivity {
         // Set up cart button to navigate to CartActivity
         cartButton.setOnClickListener(v -> startActivity(new Intent(CustomerLandingActivity.this, CartActivity.class)));
 
-        // Set up search bar listener for menu search across all restaurants
+        // Set up search bar listener
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* no-op */ }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().trim().isEmpty()) {
-                    searchMenuItems(s.toString().trim());
+                String query = s.toString().trim();
+                if (!query.isEmpty()) {
+                    searchMenuItems(query);
+                } else {
+                    searchSuggestionsRecyclerView.setVisibility(View.GONE);
+                    viewResultsButton.setVisibility(View.GONE);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) { /* no-op */ }
         });
+
 
         // Set up RecyclerViews
         setupRecyclerViews();
@@ -192,31 +224,91 @@ public class CustomerLandingActivity extends AppCompatActivity {
         return "Unknown Location";
     }
 
+
     // 🔹 Search Menu Items in Firebase
     private void searchMenuItems(String query) {
-        dbReference.child("restaurants").addListenerForSingleValueEvent(new ValueEventListener() {
+        // Use the "restaurant" node in your database
+        dbReference.child("restaurant").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<FoodItem> searchResults = new ArrayList<>();
+                List<FoodItem> prefixMatches = new ArrayList<>();
+                List<FoodItem> substringMatches = new ArrayList<>();
+                String queryLower = query.toLowerCase();
+
+                // Iterate through each restaurant
                 for (DataSnapshot restaurant : snapshot.getChildren()) {
-                    for (DataSnapshot menuItem : restaurant.child("menu").getChildren()) {
-                        FoodItem item = menuItem.getValue(FoodItem.class);
-                        if (item != null && item.getDescription().toLowerCase().contains(query.toLowerCase())) {
-                            searchResults.add(item);
+                    DataSnapshot menuNode = restaurant.child("menu");
+                    if (menuNode.exists()) {
+                        // Iterate through each category under "menu"
+                        for (DataSnapshot categoryNode : menuNode.getChildren()) {
+                            // For each food item under the category
+                            for (DataSnapshot foodSnapshot : categoryNode.getChildren()) {
+                                String foodId = foodSnapshot.getKey(); // UID used as food name
+                                if (foodId != null) {
+                                    // Check if the UID starts with the query (prefix match)
+                                    if (foodId.toLowerCase().startsWith(queryLower)) {
+                                        FoodItem item = foodSnapshot.getValue(FoodItem.class);
+                                        if (item != null) {
+                                            // Overwrite id with the UID
+                                            item = new FoodItem(foodId, item.getDescription(), item.getImageUrl(), item.getPrice());
+                                            prefixMatches.add(item);
+                                        }
+                                    } else if (foodId.toLowerCase().contains(queryLower)) {
+                                        // Substring match (UID contains the query elsewhere)
+                                        FoodItem item = foodSnapshot.getValue(FoodItem.class);
+                                        if (item != null) {
+                                            item = new FoodItem(foodId, item.getDescription(), item.getImageUrl(), item.getPrice());
+                                            substringMatches.add(item);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                if (!searchResults.isEmpty()) {
-                    Intent intent = new Intent(CustomerLandingActivity.this, SearchActivity.class);
-                    intent.putExtra("searchResults", new ArrayList<>(searchResults));
-                    startActivity(intent);
+
+                // Merge lists with prefixMatches prioritized
+                List<FoodItem> mergedResults = new ArrayList<>();
+                mergedResults.addAll(prefixMatches);
+                mergedResults.addAll(substringMatches);
+
+                if (!mergedResults.isEmpty()) {
+                    // Limit suggestions to 5 items
+                    List<FoodItem> suggestions = new ArrayList<>();
+                    int suggestionCount = Math.min(mergedResults.size(), 5);
+                    for (int i = 0; i < suggestionCount; i++) {
+                        suggestions.add(mergedResults.get(i));
+                    }
+                    // Update suggestions adapter
+                    searchAdapter.updateData(suggestions);
+                    searchSuggestionsRecyclerView.setVisibility(View.VISIBLE);
+
+                    // Update view results button text with total count
+                    viewResultsButton.setText("View all " + mergedResults.size() + " results");
+                    viewResultsButton.setVisibility(View.VISIBLE);
+                    viewResultsButton.setOnClickListener(v -> {
+                        Intent intent = new Intent(CustomerLandingActivity.this, ViewAllActivity.class);
+                        intent.putParcelableArrayListExtra("searchResults", new ArrayList<>(mergedResults));
+                        startActivity(intent);
+                    });
+                } else {
+                    // No results found: clear suggestions and show appropriate message
+                    searchAdapter.updateData(new ArrayList<>());
+                    searchSuggestionsRecyclerView.setVisibility(View.GONE);
+                    viewResultsButton.setText("No results found");
+                    viewResultsButton.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Optionally handle error here
+            }
         });
     }
+
+
+
 
     // 🔹 Set up RecyclerViews
     private void setupRecyclerViews() {

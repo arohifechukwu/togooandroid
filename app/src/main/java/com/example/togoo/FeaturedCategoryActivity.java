@@ -2,16 +2,22 @@ package com.example.togoo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.togoo.adapters.FoodAdapter;
 import com.example.togoo.models.FoodItem;
-import com.google.firebase.database.*;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +35,16 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_featured_category);
 
+        // Setup Toolbar with custom back icon
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            // Optionally, set a custom icon if needed:
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+        }
+
+        // Initialize RecyclerView and Database reference
         categoryRecyclerView = findViewById(R.id.featuredCategoryRecyclerView);
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         dbReference = FirebaseDatabase.getInstance().getReference("restaurant");
@@ -54,7 +70,6 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot restaurant : snapshot.getChildren()) {
                     String restaurantName = restaurant.child("name").getValue(String.class);
-
                     if (restaurantName != null && restaurantNames.contains(restaurantName)) {
                         DataSnapshot menuSnapshot = restaurant.child("menu").child(category);
                         for (DataSnapshot foodSnapshot : menuSnapshot.getChildren()) {
@@ -62,14 +77,12 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
                             String description = foodSnapshot.child("description").getValue(String.class);
                             String imageUrl = foodSnapshot.child("imageURL").getValue(String.class);
                             Double price = foodSnapshot.child("price").getValue(Double.class);
-
                             if (id != null && description != null && imageUrl != null && price != null) {
                                 foodItemList.add(new FoodItem(id, description, imageUrl, price));
                             }
                         }
                     }
                 }
-
                 if (foodItemList.isEmpty()) {
                     Toast.makeText(FeaturedCategoryActivity.this, "No items found for " + category, Toast.LENGTH_SHORT).show();
                     finish();
@@ -98,7 +111,7 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
         categoryRecyclerView.setAdapter(foodAdapter);
     }
 
-    // 🔹 Get Restaurant Names for Category
+    // 🔹 Get Restaurant Names for a Given Category
     private List<String> getRestaurantsForCategory(String category) {
         List<String> restaurantNames = new ArrayList<>();
         switch (category) {
@@ -124,5 +137,15 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
                 break;
         }
         return restaurantNames;
+    }
+
+    // Handle custom back navigation from the Toolbar
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            finish(); // Finish the activity and go back
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

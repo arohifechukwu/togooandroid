@@ -90,6 +90,14 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         }
     }
 
+
+    public void updateData(List<FoodItem> newData) {
+        this.foodList.clear();
+        this.foodList.addAll(newData);
+        notifyDataSetChanged();
+    }
+
+
     // Add Food Item to Firebase Cart
     // 🔹 Add Food Item to Firebase Cart using push()
     private void addToCart(FoodItem food) {

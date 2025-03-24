@@ -2,17 +2,15 @@ package com.example.togoo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.annotation.Nullable;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 
 import com.example.togoo.adapters.CartAdapter;
 import com.example.togoo.models.CartItem;
@@ -22,6 +20,7 @@ import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import androidx.annotation.Nullable;
 
 public class CartActivity extends AppCompatActivity {
 
@@ -37,11 +36,20 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        // Initialize Toolbar and set it as the action bar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            // Set your custom back icon (ensure ic_back exists in your drawable folder)
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+        }
+
         // Initialize UI components
         cartRecyclerView = findViewById(R.id.cartRecyclerView);
         btnBuyNow = findViewById(R.id.btnBuyNow);
 
-        // Get current user and reference the "cart" node
+        // Get current user and reference the "cart" node under the user's UID
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             cartRef = FirebaseDatabase.getInstance().getReference("cart").child(currentUser.getUid());
@@ -63,12 +71,21 @@ public class CartActivity extends AppCompatActivity {
         btnBuyNow.setOnClickListener(v -> proceedToCheckout());
     }
 
+    // Override the back navigation from the Toolbar
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // Navigate back when back icon is pressed
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-    // Fetch cart items from Firebase and store the push key in each CartItem
+    // Fetch cart items from Firebase and update RecyclerView in real time
     private void loadCartItems() {
         cartRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
                 CartItem item = snapshot.getValue(CartItem.class);
                 if (item != null) {
                     item.setCartItemId(snapshot.getKey()); // Store unique key for deletion
@@ -82,7 +99,6 @@ public class CartActivity extends AppCompatActivity {
                 CartItem updatedItem = snapshot.getValue(CartItem.class);
                 if (updatedItem != null) {
                     updatedItem.setCartItemId(snapshot.getKey());
-
                     for (int i = 0; i < cartItemList.size(); i++) {
                         if (cartItemList.get(i).getCartItemId().equals(snapshot.getKey())) {
                             cartItemList.set(i, updatedItem);
@@ -118,14 +134,12 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-
-    // Proceed to CheckoutActivity with the current cart items
+    // Proceed to CheckoutActivity with current cart items
     private void proceedToCheckout() {
         if (cartItemList.isEmpty()) {
             Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show();
             return;
         }
-
         ArrayList<CartItem> checkoutItems = new ArrayList<>(cartItemList);
         Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
         intent.putParcelableArrayListExtra("cartItems", checkoutItems);
