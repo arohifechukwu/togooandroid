@@ -31,6 +31,9 @@ public class CheckoutActivity extends AppCompatActivity {
     private static final double GST_RATE = 0.05; // 5% Federal Tax
     private static final double QST_RATE = 0.09975; // 9.975% Quebec Tax
 
+    // Field to store the calculated total amount (in dollars)
+    private double totalAmount = 0.0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +42,7 @@ public class CheckoutActivity extends AppCompatActivity {
         // Initialize Toolbar and set it as the action bar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
         }
@@ -83,7 +86,7 @@ public class CheckoutActivity extends AppCompatActivity {
     // Handle back navigation from the Toolbar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
@@ -101,16 +104,20 @@ public class CheckoutActivity extends AppCompatActivity {
         double qst = subtotal * QST_RATE;
         double total = subtotal + gst + qst;
 
+        // Store the calculated total in a member variable for later use
+        totalAmount = total;
+
         subtotalText.setText(String.format("$%.2f", subtotal));
         gstText.setText(String.format("$%.2f", gst));
         qstText.setText(String.format("$%.2f", qst));
         totalText.setText(String.format("$%.2f", total));
     }
 
-    // Proceed to PaymentActivity with current checkout items
+    // Proceed to PaymentActivity with current checkout items and the calculated total
     private void proceedToPayment() {
         Intent intent = new Intent(CheckoutActivity.this, PaymentActivity.class);
         intent.putParcelableArrayListExtra("checkoutItems", new ArrayList<>(checkoutItemList));
+        intent.putExtra("checkoutTotal", totalAmount); // Pass total amount (in dollars)
         startActivity(intent);
     }
 }
