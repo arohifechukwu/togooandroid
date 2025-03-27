@@ -3,5 +3,5 @@
     <!-- Active State -->
     <item android:color="@color/primary_color" android:state_checked="true"/>
     <!-- Inactive State -->
-    <item android:color="@color/button_disabled" android:state_checked="false"/>
+    <item android:color="@color/dark_gray" android:state_checked="false"/>
 </selector>

@@ -39,7 +39,7 @@ public class AccountActivity extends AppCompatActivity {
         aboutUsCard = findViewById(R.id.cardAboutUs);
         faqCard = findViewById(R.id.cardFAQ);
         languageCard = findViewById(R.id.cardLanguage);
-        logoutCard = findViewById(R.id.cardLogout); // ✅ Logout button
+        logoutCard = findViewById(R.id.cardLogout);
         themeSwitch = findViewById(R.id.switchTheme);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 

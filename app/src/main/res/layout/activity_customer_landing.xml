@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:strokeColor="@color/primary_variant">
+                app:strokeColor="@color/white">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/featuredCategoriesRecyclerView"
@@ -132,7 +132,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:strokeColor="@color/primary_variant">
+                app:strokeColor="@color/white">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/specialOffersRecyclerView"
@@ -160,7 +160,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:strokeColor="@color/primary_variant">
+                app:strokeColor="@color/white">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/topPicksRecyclerView"
@@ -180,7 +180,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/white"
-        app:itemIconTint="@color/primary_color"
-        app:itemTextColor="@color/primary_color"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/navigation_colors"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/customer_bottom_navigation_menu"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
