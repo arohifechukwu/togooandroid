@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Togoo"
         tools:targetApi="31">
         <activity
+            android:name=".RestaurantPageActivity"
+            android:exported="false" />
+        <activity
             android:name=".ViewAllActivity"
             android:exported="false" />
         <activity

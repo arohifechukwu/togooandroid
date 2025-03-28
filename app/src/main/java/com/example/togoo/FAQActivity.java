@@ -5,6 +5,8 @@ import android.widget.ExpandableListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.togoo.adapters.FAQExpandableListAdapter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
 public class FAQActivity extends AppCompatActivity {
 
     private ExpandableListView faqExpandableListView;
-    private com.example.togoo.FAQExpandableListAdapter adapter;
+    private FAQExpandableListAdapter adapter;
     private List<String> faqQuestions;
     private HashMap<String, List<String>> faqData;
 
@@ -23,7 +25,7 @@ public class FAQActivity extends AppCompatActivity {
 
         faqExpandableListView = findViewById(R.id.faqExpandableListView);
         prepareFAQData();
-        adapter = new com.example.togoo.FAQExpandableListAdapter(this, faqQuestions, faqData);
+        adapter = new FAQExpandableListAdapter(this, faqQuestions, faqData);
         faqExpandableListView.setAdapter(adapter);
     }
 

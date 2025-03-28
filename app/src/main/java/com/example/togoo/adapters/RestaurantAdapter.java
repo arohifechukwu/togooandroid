@@ -42,13 +42,28 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Restaurant restaurant = restaurantList.get(position);
-        holder.restaurantName.setText(restaurant.getName());
-        holder.restaurantLocation.setText(restaurant.getLocation());
 
+        holder.restaurantName.setText(restaurant.getName());
+        holder.restaurantLocation.setText(restaurant.getAddress());
+
+        // Set image
         Glide.with(context)
-                .load(restaurant.getImageUrl())
+                .load(restaurant.getImageURL())
                 .placeholder(R.drawable.ic_restaurant_placeholder)
                 .into(holder.restaurantImage);
+
+        // Set rating if available
+        if (holder.restaurantRating != null) {
+            holder.restaurantRating.setText("\u2B50 " + restaurant.getRating());
+        }
+
+        // Set distance and ETA (if passed separately from adapter or can be computed)
+        if (holder.restaurantDistance != null && restaurant.getDistanceKm() > 0) {
+            holder.restaurantDistance.setText(String.format("%.1f km", restaurant.getDistanceKm()));
+        }
+        if (holder.restaurantETA != null && restaurant.getEtaMinutes() > 0) {
+            holder.restaurantETA.setText(restaurant.getEtaMinutes() + " mins");
+        }
 
         holder.itemView.setOnClickListener(v -> listener.onRestaurantClick(restaurant));
     }
@@ -60,13 +75,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView restaurantImage;
-        TextView restaurantName, restaurantLocation;
+        TextView restaurantName, restaurantLocation, restaurantRating, restaurantDistance, restaurantETA;
 
         public ViewHolder(View itemView) {
             super(itemView);
             restaurantImage = itemView.findViewById(R.id.restaurantImage);
             restaurantName = itemView.findViewById(R.id.restaurantName);
             restaurantLocation = itemView.findViewById(R.id.restaurantLocation);
+            restaurantRating = itemView.findViewById(R.id.restaurantRating);
+            restaurantDistance = itemView.findViewById(R.id.restaurantDistance);
+            restaurantETA = itemView.findViewById(R.id.restaurantETA);
         }
     }
 }

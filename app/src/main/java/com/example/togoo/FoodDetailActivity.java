@@ -96,19 +96,21 @@ public class FoodDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Add food item to Firebase Cart under the exact user's UID
     private void addToCart() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, "Please log in to add items to the cart.", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        String uid = currentUser.getUid();
+        DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("cart").child(uid);
+
         // Create a new CartItem (with quantity 1)
         CartItem cartItem = new CartItem(foodId, foodDescStr, foodImgUrl, foodPriceVal, 1);
 
-        // Use push() to add a new entry so duplicate adds get unique keys
-        DatabaseReference newItemRef = cartRef.push();
-        newItemRef.setValue(cartItem).addOnCompleteListener(task -> {
+        // Use push() to add a new entry
+        cartRef.push().setValue(cartItem).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(FoodDetailActivity.this, "Added to Cart!", Toast.LENGTH_SHORT).show();
             } else {
