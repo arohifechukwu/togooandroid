@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/foodDetailsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:title="Food Details"
+        android:titleTextColor="@android:color/white"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/ic_back" />
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/editFoodImage"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="centerCrop"
+                android:contentDescription="Food Image"
+                android:src="@drawable/burger" />
+
+            <Button
+                android:id="@+id/pickImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="Pick Image" />
+
+            <EditText
+                android:id="@+id/editFoodName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Food Name"
+                android:inputType="textPersonName"
+                android:layout_marginTop="12dp" />
+
+            <EditText
+                android:id="@+id/editFoodDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/editFoodPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Price"
+                android:inputType="numberDecimal"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/saveFoodButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Save Changes" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

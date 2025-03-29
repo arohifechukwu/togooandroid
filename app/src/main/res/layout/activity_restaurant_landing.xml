@@ -1,32 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/landingRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/white">
+    android:background="?android:colorBackground"
+    android:padding="8dp">
 
-  <!-- Welcome Message -->
   <TextView
-      android:id="@+id/welcomeText"
-      android:layout_width="wrap_content"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Welcome to Restaurant Landing Page"
+      android:text="Orders"
+      android:padding="16dp"
       android:textSize="20sp"
-      android:textStyle="bold"
-      android:textColor="@color/black"
-      android:layout_marginBottom="32dp" />
-
-  <!-- Logout Button -->
-  <Button
-      android:id="@+id/btnLogout"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Logout"
-      android:textAllCaps="false"
-      android:backgroundTint="@color/primary_color"
       android:textColor="@android:color/white"
-      android:padding="12dp"
-      android:elevation="4dp" />
+      android:background="?attr/colorPrimary"
+      android:textStyle="bold" />
+
+  <!-- Scrollable Orders Container -->
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:padding="4dp">
+
+    <LinearLayout
+        android:id="@+id/ordersContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle"
+        android:dividerPadding="8dp" />
+  </ScrollView>
+
+  <!-- Bottom Navigation -->
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottomNavigation"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?attr/colorSurface"
+      app:menu="@menu/restaurant_bottom_navigation_menu"
+      app:labelVisibilityMode="labeled"
+      app:itemIconTint="@color/navigation_colors"
+      app:itemTextColor="@color/navigation_colors" />
 </LinearLayout>

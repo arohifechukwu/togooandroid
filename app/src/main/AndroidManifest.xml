@@ -17,6 +17,21 @@
         android:theme="@style/Theme.Togoo"
         tools:targetApi="31">
         <activity
+            android:name=".EditFoodItemActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RestaurantProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RestaurantManageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RestaurantReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RestaurantNewActivity"
+            android:exported="false" />
+        <activity
             android:name=".RestaurantPageActivity"
             android:exported="false" />
         <activity

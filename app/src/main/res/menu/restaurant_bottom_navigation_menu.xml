@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_orders"
+        android:icon="@drawable/ic_buy"
+        android:title="Orders" />
+
+    <item
+        android:id="@+id/navigation_new"
+        android:icon="@drawable/ic_create"
+        android:title="New" />
+
+    <item
+        android:id="@+id/navigation_reports"
+        android:icon="@drawable/ic_report"
+        android:title="Reports" />
+
+    <item
+        android:id="@+id/navigation_manage"
+        android:icon="@drawable/ic_manage"
+        android:title="Manage" />
+
+    <item
+        android:id="@+id/navigation_account"
+        android:icon="@drawable/ic_setting"
+        android:title="Account" />
+</menu>

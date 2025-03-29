@@ -5,9 +5,13 @@ import android.os.Parcelable;
 
 public class FoodItem implements Parcelable {
     private String id;             // UID
-    private String description;    // Description of the food
-    private String imageURL;       // Corrected field name to match Firebase
+    private String description;
+    private String imageURL;
     private double price;
+
+    // New fields for filtering/navigation
+    private String parentNode;     // e.g., "menu", "Top Picks"
+    private String category;       // e.g., "Pizza", "Burgers" (null for non-menu items)
 
     public FoodItem() {}
 
@@ -24,6 +28,8 @@ public class FoodItem implements Parcelable {
         description = in.readString();
         imageURL = in.readString();
         price = in.readDouble();
+        parentNode = in.readString();
+        category = in.readString();
     }
 
     public static final Creator<FoodItem> CREATOR = new Creator<FoodItem>() {
@@ -44,6 +50,8 @@ public class FoodItem implements Parcelable {
         dest.writeString(description);
         dest.writeString(imageURL);
         dest.writeDouble(price);
+        dest.writeString(parentNode);
+        dest.writeString(category);
     }
 
     @Override
@@ -54,12 +62,16 @@ public class FoodItem implements Parcelable {
     // Getters
     public String getId() { return id; }
     public String getDescription() { return description; }
-    public String getImageURL() { return imageURL; }  // Updated getter name
+    public String getImageURL() { return imageURL; }
     public double getPrice() { return price; }
+    public String getParentNode() { return parentNode; }
+    public String getCategory() { return category; }
 
-    // Optional: Setters if needed
+    // Setters
     public void setId(String id) { this.id = id; }
     public void setDescription(String description) { this.description = description; }
     public void setImageURL(String imageURL) { this.imageURL = imageURL; }
     public void setPrice(double price) { this.price = price; }
+    public void setParentNode(String parentNode) { this.parentNode = parentNode; }
+    public void setCategory(String category) { this.category = category; }
 }
