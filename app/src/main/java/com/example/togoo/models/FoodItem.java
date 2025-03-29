@@ -4,25 +4,25 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class FoodItem implements Parcelable {
-    private String id; // UID
-    private String description; // Correct Field for Description
-    private String imageUrl;
+    private String id;             // UID
+    private String description;    // Description of the food
+    private String imageURL;       // Corrected field name to match Firebase
     private double price;
 
-    public FoodItem() { }
+    public FoodItem() {}
 
-    public FoodItem(String id, String description, String imageUrl, double price) {
+    public FoodItem(String id, String description, String imageURL, double price) {
         this.id = id;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.imageURL = imageURL;
         this.price = price;
     }
 
-    // Parcelable Constructor
+    // Parcelable constructor
     protected FoodItem(Parcel in) {
         id = in.readString();
         description = in.readString();
-        imageUrl = in.readString();
+        imageURL = in.readString();
         price = in.readDouble();
     }
 
@@ -42,7 +42,7 @@ public class FoodItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(description);
-        dest.writeString(imageUrl);
+        dest.writeString(imageURL);
         dest.writeDouble(price);
     }
 
@@ -54,6 +54,12 @@ public class FoodItem implements Parcelable {
     // Getters
     public String getId() { return id; }
     public String getDescription() { return description; }
-    public String getImageUrl() { return imageUrl; }
+    public String getImageURL() { return imageURL; }  // Updated getter name
     public double getPrice() { return price; }
+
+    // Optional: Setters if needed
+    public void setId(String id) { this.id = id; }
+    public void setDescription(String description) { this.description = description; }
+    public void setImageURL(String imageURL) { this.imageURL = imageURL; }
+    public void setPrice(double price) { this.price = price; }
 }

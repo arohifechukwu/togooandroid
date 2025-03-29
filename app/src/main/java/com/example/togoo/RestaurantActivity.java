@@ -77,7 +77,7 @@ public class RestaurantActivity extends AppCompatActivity {
             Intent intent = new Intent(RestaurantActivity.this, FoodDetailActivity.class);
             intent.putExtra("foodId", foodItem.getId());
             intent.putExtra("foodDescription", foodItem.getDescription());
-            intent.putExtra("foodImage", foodItem.getImageUrl());
+            intent.putExtra("foodImage", foodItem.getImageURL());
             intent.putExtra("foodPrice", foodItem.getPrice());
             startActivity(intent);
         });
@@ -117,7 +117,7 @@ public class RestaurantActivity extends AppCompatActivity {
                                 if (foodId != null && foodId.toLowerCase().contains(query.toLowerCase())) {
                                     FoodItem item = foodSnap.getValue(FoodItem.class);
                                     if (item != null) {
-                                        item = new FoodItem(foodId, item.getDescription(), item.getImageUrl(), item.getPrice());
+                                        item = new FoodItem(foodId, item.getDescription(), item.getImageURL(), item.getPrice());
                                         matches.add(item);
                                     }
                                 }
@@ -195,8 +195,11 @@ public class RestaurantActivity extends AppCompatActivity {
                         String imageUrl = restaurantSnap.child("imageURL").getValue(String.class);
 
                         // 🔧 Get lat/lon as Strings and parse manually
-                        String latStr = restaurantSnap.child("location").child("latitude").getValue(String.class);
-                        String lonStr = restaurantSnap.child("location").child("longitude").getValue(String.class);
+                        Object latObj = restaurantSnap.child("location").child("latitude").getValue();
+                        Object lonObj = restaurantSnap.child("location").child("longitude").getValue();
+
+                        String latStr = (latObj instanceof Double) ? String.valueOf(latObj) : (String) latObj;
+                        String lonStr = (lonObj instanceof Double) ? String.valueOf(lonObj) : (String) lonObj;
 
                         double latitude = 0.0;
                         double longitude = 0.0;

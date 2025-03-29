@@ -52,7 +52,7 @@ public class ViewAllActivity extends AppCompatActivity {
                 Intent intent = new Intent(ViewAllActivity.this, FoodDetailActivity.class);
                 intent.putExtra("foodId", foodItem.getId());
                 intent.putExtra("foodDescription", foodItem.getDescription());
-                intent.putExtra("foodImage", foodItem.getImageUrl());
+                intent.putExtra("foodImage", foodItem.getImageURL());
                 intent.putExtra("foodPrice", foodItem.getPrice());
                 startActivity(intent);
             }

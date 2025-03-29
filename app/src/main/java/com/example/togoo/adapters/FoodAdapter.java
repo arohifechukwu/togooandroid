@@ -57,7 +57,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         holder.foodPrice.setText("$" + food.getPrice());
 
         Glide.with(context)
-                .load(food.getImageUrl() != null ? food.getImageUrl() : R.drawable.ic_food_placeholder)
+                .load(food.getImageURL() != null ? food.getImageURL() : R.drawable.ic_food_placeholder)
                 .into(holder.foodImage);
 
         // Item click listener
@@ -106,7 +106,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         // Create a new CartItem (quantity initially 1)
-        CartItem cartItem = new CartItem(food.getId(), food.getDescription(), food.getImageUrl(), food.getPrice(), 1);
+        CartItem cartItem = new CartItem(food.getId(), food.getDescription(), food.getImageURL(), food.getPrice(), 1);
 
         // Use push() to add a new entry so each duplicate gets its own unique key
         DatabaseReference newItemRef = cartRef.push();
@@ -122,7 +122,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     // Buy Now: move the item directly to CheckoutActivity
     private void buyNow(FoodItem food) {
         List<CartItem> checkoutItems = new ArrayList<>();
-        checkoutItems.add(new CartItem(food.getId(), food.getDescription(), food.getImageUrl(), food.getPrice(), 1));
+        checkoutItems.add(new CartItem(food.getId(), food.getDescription(), food.getImageURL(), food.getPrice(), 1));
 
         Intent intent = new Intent(context, CheckoutActivity.class);
         intent.putParcelableArrayListExtra("cartItems", new ArrayList<>(checkoutItems));

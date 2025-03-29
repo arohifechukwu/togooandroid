@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 import java.util.Map;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -104,6 +105,7 @@ public class RestaurantPageActivity extends AppCompatActivity {
                 userLatitude = lat;
                 userLongitude = lon;
                 updateDistanceDisplay();
+                fetchMoreToExplore(); //accurate location update
             }
         });
 
@@ -114,7 +116,6 @@ public class RestaurantPageActivity extends AppCompatActivity {
         // Load dynamic sections
         fetchFeaturedItems();
         fetchMenuSections();
-        fetchMoreToExplore();
     }
 
     // Callback interface for fetching user location
@@ -135,8 +136,11 @@ public class RestaurantPageActivity extends AppCompatActivity {
                     String address = snapshot.child("address").getValue(String.class);
 
                     // Location
-                    String latStr = snapshot.child("location").child("latitude").getValue(String.class);
-                    String lonStr = snapshot.child("location").child("longitude").getValue(String.class);
+                    Object latObj = snapshot.child("location").child("latitude").getValue();
+                    Object lonObj = snapshot.child("location").child("longitude").getValue();
+
+                    String latStr = (latObj instanceof Double) ? String.valueOf(latObj) : (String) latObj;
+                    String lonStr = (lonObj instanceof Double) ? String.valueOf(lonObj) : (String) lonObj;
                     LocationCoordinates location = new LocationCoordinates();
                     location.setLatitude(latStr != null ? latStr : "0");
                     location.setLongitude(lonStr != null ? lonStr : "0");
@@ -261,15 +265,24 @@ public class RestaurantPageActivity extends AppCompatActivity {
 
     // Compare current Montreal time with open and close times.
     private String getOperatingHoursStatus(String open, String close) {
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault()); // 24-hour format
         sdf.setTimeZone(TimeZone.getTimeZone("America/Montreal"));
         try {
-            Date openDate = sdf.parse(open);
-            Date closeDate = sdf.parse(close);
+            // Get current time in Montreal
             Date now = new Date();
-            long nowMillis = now.getTime();
-            long openMillis = openDate.getTime();
-            long closeMillis = closeDate.getTime();
+            String currentTimeString = new SimpleDateFormat("HH:mm", Locale.getDefault())
+                    .format(now);
+
+            Date nowTime = sdf.parse(currentTimeString);
+            Date openTime = sdf.parse(open);
+            Date closeTime = sdf.parse(close);
+
+            if (nowTime == null || openTime == null || closeTime == null) return "Hours unavailable";
+
+            long nowMillis = nowTime.getTime();
+            long openMillis = openTime.getTime();
+            long closeMillis = closeTime.getTime();
+
             if (nowMillis < openMillis) {
                 return "Available at " + open;
             } else if (nowMillis > closeMillis) {
@@ -279,8 +292,8 @@ public class RestaurantPageActivity extends AppCompatActivity {
             }
         } catch (ParseException e) {
             e.printStackTrace();
+            return "Hours unavailable";
         }
-        return "";
     }
 
     // Fetch Featured Items from "Special Offers" node.
@@ -296,7 +309,7 @@ public class RestaurantPageActivity extends AppCompatActivity {
 
                     if (foodId != null && rawItem != null) {
                         // Set the UID (name) manually so it's not null in FoodDetailActivity
-                        FoodItem item = new FoodItem(foodId, rawItem.getDescription(), rawItem.getImageUrl(), rawItem.getPrice());
+                        FoodItem item = new FoodItem(foodId, rawItem.getDescription(), rawItem.getImageURL(), rawItem.getPrice());
                         featuredItems.add(item);
                     }
                 }
@@ -305,7 +318,7 @@ public class RestaurantPageActivity extends AppCompatActivity {
                     Intent intent = new Intent(RestaurantPageActivity.this, FoodDetailActivity.class);
                     intent.putExtra("foodId", foodItem.getId());
                     intent.putExtra("foodDescription", foodItem.getDescription());
-                    intent.putExtra("foodImage", foodItem.getImageUrl());
+                    intent.putExtra("foodImage", foodItem.getImageURL());
                     intent.putExtra("foodPrice", foodItem.getPrice());
                     startActivity(intent);
                 });
@@ -338,7 +351,7 @@ private void fetchMenuSections() {
 
                     if (foodId != null && rawItem != null) {
                         // Explicitly set the ID (name/UID) from Firebase key
-                        FoodItem item = new FoodItem(foodId, rawItem.getDescription(), rawItem.getImageUrl(), rawItem.getPrice());
+                        FoodItem item = new FoodItem(foodId, rawItem.getDescription(), rawItem.getImageURL(), rawItem.getPrice());
                         sectionItems.add(item);
                     }
                 }
@@ -356,7 +369,7 @@ private void fetchMenuSections() {
                     Intent intent = new Intent(RestaurantPageActivity.this, FoodDetailActivity.class);
                     intent.putExtra("foodId", foodItem.getId());
                     intent.putExtra("foodDescription", foodItem.getDescription());
-                    intent.putExtra("foodImage", foodItem.getImageUrl());
+                    intent.putExtra("foodImage", foodItem.getImageURL());
                     intent.putExtra("foodPrice", foodItem.getPrice());
                     startActivity(intent);
                 });
@@ -375,51 +388,82 @@ private void fetchMenuSections() {
 
     // Fetch 7 random restaurants for "More to explore".
     // This is done to avoid the user from having to search for restaurants.
-
     private void fetchMoreToExplore() {
         DatabaseReference restaurantsRef = FirebaseDatabase.getInstance().getReference("restaurant");
         restaurantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Restaurant> allRestaurants = new ArrayList<>();
+
                 for (DataSnapshot snap : snapshot.getChildren()) {
-                    Restaurant r = snap.getValue(Restaurant.class);
-                    if (r != null) {
-                        r = new Restaurant(
-                                snap.getKey(), // ✅ Set the ID manually
-                                r.getName(),
-                                r.getAddress(),
-                                r.getImageURL(),
-                                r.getLocation(),
-                                r.getOperatingHours(),
-                                r.getRating(),
-                                r.getDistanceKm(),
-                                r.getEtaMinutes()
-                        );
+                    String id = snap.getKey();
+                    String name = snap.child("name").getValue(String.class);
+                    String address = snap.child("address").getValue(String.class);
+                    String imageUrl = snap.child("imageURL").getValue(String.class);
 
-                        if (restaurantId != null && !restaurantId.equals(r.getId())) {
-                            allRestaurants.add(r);
-                        }
+                    Object latObj = snap.child("location").child("latitude").getValue();
+                    Object lonObj = snap.child("location").child("longitude").getValue();
+
+                    if (latObj == null || lonObj == null) continue;
+
+                    double restLat, restLon;
+                    try {
+                        restLat = Double.parseDouble(latObj.toString());
+                        restLon = Double.parseDouble(lonObj.toString());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    LocationCoordinates location = new LocationCoordinates();
+                    location.setLatitude(latObj.toString());
+                    location.setLongitude(lonObj.toString());
+
+                    // Optional: rating
+                    Double ratingVal = snap.child("rating").getValue(Double.class);
+                    double rating = ratingVal != null ? ratingVal : 4.5;
+
+                    // Optional: operatingHours
+                    Map<String, OperatingHours> operatingHours = snap.child("operatingHours")
+                            .getValue(new GenericTypeIndicator<Map<String, OperatingHours>>() {});
+
+                    // Build the restaurant object
+                    Restaurant r = new Restaurant(
+                            id != null ? id : "",
+                            name != null ? name : "Unnamed",
+                            address != null ? address : "Unknown",
+                            imageUrl != null ? imageUrl : "",
+                            location,
+                            operatingHours,
+                            rating,
+                            0,
+                            0
+                    );
+
+                    // Compute distance and ETA
+                    float[] results = new float[1];
+                    Location.distanceBetween(userLatitude, userLongitude, restLat, restLon, results);
+                    double distanceKm = results[0] / 1000.0;
+                    int etaMinutes = (int) ((distanceKm / 40.0) * 60);
+
+                    r.setDistanceKm(distanceKm);
+                    r.setEtaMinutes(etaMinutes);
+
+                    // Exclude the current restaurant
+                    if (restaurantId != null && !r.getId().equals(restaurantId)) {
+                        allRestaurants.add(r);
                     }
                 }
 
-                // Pick 7 random restaurants
-                List<Restaurant> randomRestaurants = new ArrayList<>();
-                Random random = new Random();
-                int count = Math.min(7, allRestaurants.size());
-                while (randomRestaurants.size() < count) {
-                    Restaurant candidate = allRestaurants.get(random.nextInt(allRestaurants.size()));
-                    if (!randomRestaurants.contains(candidate)) {
-                        randomRestaurants.add(candidate);
-                    }
-                }
+                allRestaurants.sort((r1, r2) -> Double.compare(r1.getDistanceKm(), r2.getDistanceKm()));
+                List<Restaurant> top7Nearby = allRestaurants.subList(0, Math.min(7, allRestaurants.size()));
+                Log.d("MoreToExplore", "Loaded " + top7Nearby.size() + " restaurants");
 
-                // Set up layout manager and adapter
                 moreToExploreRecyclerView.setLayoutManager(new LinearLayoutManager(
                         RestaurantPageActivity.this, LinearLayoutManager.HORIZONTAL, false
                 ));
 
-                RestaurantAdapter moreAdapter = new RestaurantAdapter(RestaurantPageActivity.this, randomRestaurants, restaurant -> {
+                RestaurantAdapter moreAdapter = new RestaurantAdapter(RestaurantPageActivity.this, top7Nearby, restaurant -> {
                     Intent intent = new Intent(RestaurantPageActivity.this, RestaurantPageActivity.class);
                     intent.putExtra("restaurantId", restaurant.getId());
                     startActivity(intent);
@@ -430,7 +474,7 @@ private void fetchMenuSections() {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error gracefully
+                Log.e("MoreToExplore", "Failed to fetch restaurants: " + error.getMessage());
             }
         });
     }

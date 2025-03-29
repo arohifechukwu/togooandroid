@@ -60,18 +60,15 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
         }
     }
 
-    // 🔹 Fetch Category Items from Firebase
-    private void fetchCategoryItems(String category) {
-        List<String> restaurantNames = getRestaurantsForCategory(category);
-        foodItemList.clear();
 
+    private void fetchCategoryItems(String category) {
+        foodItemList.clear();
         dbReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot restaurant : snapshot.getChildren()) {
-                    String restaurantName = restaurant.child("name").getValue(String.class);
-                    if (restaurantName != null && restaurantNames.contains(restaurantName)) {
-                        DataSnapshot menuSnapshot = restaurant.child("menu").child(category);
+                    DataSnapshot menuSnapshot = restaurant.child("menu").child(category);
+                    if (menuSnapshot.exists()) {
                         for (DataSnapshot foodSnapshot : menuSnapshot.getChildren()) {
                             String id = foodSnapshot.getKey();
                             String description = foodSnapshot.child("description").getValue(String.class);
@@ -83,6 +80,7 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
                         }
                     }
                 }
+
                 if (foodItemList.isEmpty()) {
                     Toast.makeText(FeaturedCategoryActivity.this, "No items found for " + category, Toast.LENGTH_SHORT).show();
                     finish();
@@ -104,7 +102,7 @@ public class FeaturedCategoryActivity extends AppCompatActivity {
             Intent intent = new Intent(FeaturedCategoryActivity.this, FoodDetailActivity.class);
             intent.putExtra("foodId", foodItem.getId());
             intent.putExtra("foodDescription", foodItem.getDescription());
-            intent.putExtra("foodImage", foodItem.getImageUrl());
+            intent.putExtra("foodImage", foodItem.getImageURL());
             intent.putExtra("foodPrice", foodItem.getPrice());
             startActivity(intent);
         });

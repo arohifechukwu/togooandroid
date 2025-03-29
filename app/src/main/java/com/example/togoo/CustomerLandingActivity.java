@@ -87,7 +87,7 @@ public class CustomerLandingActivity extends AppCompatActivity {
             Intent intent = new Intent(CustomerLandingActivity.this, FoodDetailActivity.class);
             intent.putExtra("foodId", foodItem.getId());
             intent.putExtra("foodDescription", foodItem.getDescription());
-            intent.putExtra("foodImage", foodItem.getImageUrl());
+            intent.putExtra("foodImage", foodItem.getImageURL());
             intent.putExtra("foodPrice", foodItem.getPrice());
             startActivity(intent);
         });
@@ -250,14 +250,14 @@ public class CustomerLandingActivity extends AppCompatActivity {
                                         FoodItem item = foodSnapshot.getValue(FoodItem.class);
                                         if (item != null) {
                                             // Overwrite id with the UID
-                                            item = new FoodItem(foodId, item.getDescription(), item.getImageUrl(), item.getPrice());
+                                            item = new FoodItem(foodId, item.getDescription(), item.getImageURL(), item.getPrice());
                                             prefixMatches.add(item);
                                         }
                                     } else if (foodId.toLowerCase().contains(queryLower)) {
                                         // Substring match (UID contains the query elsewhere)
                                         FoodItem item = foodSnapshot.getValue(FoodItem.class);
                                         if (item != null) {
-                                            item = new FoodItem(foodId, item.getDescription(), item.getImageUrl(), item.getPrice());
+                                            item = new FoodItem(foodId, item.getDescription(), item.getImageURL(), item.getPrice());
                                             substringMatches.add(item);
                                         }
                                     }
@@ -379,7 +379,7 @@ public class CustomerLandingActivity extends AppCompatActivity {
                     Intent intent = new Intent(CustomerLandingActivity.this, FoodDetailActivity.class);
                     intent.putExtra("foodId", foodItem.getId()); // e.g., Cheeseburger
                     intent.putExtra("foodDescription", foodItem.getDescription()); // Description
-                    intent.putExtra("foodImage", foodItem.getImageUrl()); // Image URL
+                    intent.putExtra("foodImage", foodItem.getImageURL()); // Image URL
                     intent.putExtra("foodPrice", foodItem.getPrice()); // Price
                     startActivity(intent);
                 }));
@@ -418,7 +418,7 @@ public class CustomerLandingActivity extends AppCompatActivity {
                     Intent intent = new Intent(CustomerLandingActivity.this, FoodDetailActivity.class);
                     intent.putExtra("foodId", foodItem.getId());
                     intent.putExtra("foodDescription", foodItem.getDescription());
-                    intent.putExtra("foodImage", foodItem.getImageUrl());
+                    intent.putExtra("foodImage", foodItem.getImageURL());
                     intent.putExtra("foodPrice", foodItem.getPrice());
                     startActivity(intent);
                 }));
