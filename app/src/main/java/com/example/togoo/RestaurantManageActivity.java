@@ -287,7 +287,7 @@ public class RestaurantManageActivity extends AppCompatActivity {
                     startActivity(new Intent(RestaurantManageActivity.this, RestaurantLandingActivity.class));
                     return true;
                 } else if (id == R.id.navigation_account) {
-                    startActivity(new Intent(RestaurantManageActivity.this, AccountActivity.class));
+                    startActivity(new Intent(RestaurantManageActivity.this, RestaurantAccountActivity.class));
                     return true;
                 }
                 return false;

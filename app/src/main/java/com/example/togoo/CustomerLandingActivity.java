@@ -187,8 +187,8 @@ public class CustomerLandingActivity extends AppCompatActivity {
                     if (snapshot.exists()) {
                         // Update location in the correct node
                         DatabaseReference locationRef = userRef.child("location");
-                        locationRef.child("Latitude").setValue(latitude);
-                        locationRef.child("Longitude").setValue(longitude)
+                        locationRef.child("latitude").setValue(latitude);
+                        locationRef.child("longitude").setValue(longitude)
                                 .addOnSuccessListener(aVoid -> Log.d("FirebaseSuccess", "Location updated for " + userType))
                                 .addOnFailureListener(e -> Log.e("FirebaseError", "Failed to update location: " + e.getMessage()));
                     }
