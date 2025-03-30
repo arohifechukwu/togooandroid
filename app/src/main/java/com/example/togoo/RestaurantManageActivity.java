@@ -27,6 +27,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,13 +72,15 @@ public class RestaurantManageActivity extends AppCompatActivity {
         fetchMenuCategories();
     }
 
+
     private void fetchSectionItems(String sectionName) {
         restaurantRef.child(sectionName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 removeSectionViews(sectionName);
 
-                List<FoodItem> sectionItems = new ArrayList<>();
+                // Remove items for this section from the list
+                allFoodItems.removeIf(item -> sectionName.equals(item.getParentNode()));
 
                 for (DataSnapshot itemSnap : snapshot.getChildren()) {
                     String id = itemSnap.getKey();
@@ -85,11 +89,10 @@ public class RestaurantManageActivity extends AppCompatActivity {
                         item.setId(id);
                         item.setCategory(null);
                         item.setParentNode(sectionName);
-                        sectionItems.add(item);
+                        allFoodItems.add(item);
                     }
                 }
 
-                allFoodItems.addAll(sectionItems);
                 filterFoodItems(searchInput.getText().toString().trim());
             }
 
@@ -100,13 +103,15 @@ public class RestaurantManageActivity extends AppCompatActivity {
         });
     }
 
+
     private void fetchMenuCategories() {
         restaurantRef.child("menu").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 removeMenuViews();
 
-                List<FoodItem> menuItems = new ArrayList<>();
+                // Remove all menu items
+                allFoodItems.removeIf(item -> "menu".equals(item.getParentNode()));
 
                 for (DataSnapshot categorySnap : snapshot.getChildren()) {
                     String category = categorySnap.getKey();
@@ -117,12 +122,11 @@ public class RestaurantManageActivity extends AppCompatActivity {
                             item.setId(id);
                             item.setCategory(category);
                             item.setParentNode("menu");
-                            menuItems.add(item);
+                            allFoodItems.add(item);
                         }
                     }
                 }
 
-                allFoodItems.addAll(menuItems);
                 filterFoodItems(searchInput.getText().toString().trim());
             }
 
@@ -173,14 +177,28 @@ public class RestaurantManageActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+
+
         deleteBtn.setOnClickListener(v -> {
             DatabaseReference itemRef = "menu".equals(parentNode)
                     ? restaurantRef.child("menu").child(category).child(id)
                     : restaurantRef.child(parentNode).child(id);
 
+            // Delete from Firebase Realtime Database
             itemRef.removeValue().addOnSuccessListener(aVoid -> {
-                Toast.makeText(this, "Deleted successfully", Toast.LENGTH_SHORT).show();
-                manageContainer.removeView(view);
+                if (item.getImageURL() != null && !item.getImageURL().isEmpty()) {
+                    StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(item.getImageURL());
+                    imageRef.delete().addOnSuccessListener(unused -> {
+                        Toast.makeText(this, "Item and image deleted", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(this, "Item deleted, image not deleted", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    Toast.makeText(this, "Item deleted", Toast.LENGTH_SHORT).show();
+                }
+                // No manual UI updates here — let the database listener update the UI
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Failed to delete item", Toast.LENGTH_SHORT).show();
             });
         });
 

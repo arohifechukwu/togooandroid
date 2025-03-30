@@ -104,21 +104,30 @@ public class RestaurantActivity extends AppCompatActivity {
         fetchRestaurants();
     }
 
+
     private void searchMenuItems(String query) {
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<FoodItem> matches = new ArrayList<>();
+                List<FoodItem> prefixMatches = new ArrayList<>();
+                List<FoodItem> substringMatches = new ArrayList<>();
+                String queryLower = query.toLowerCase();
+
                 for (DataSnapshot restaurant : snapshot.getChildren()) {
                     DataSnapshot menuNode = restaurant.child("menu");
                     if (menuNode.exists()) {
                         for (DataSnapshot category : menuNode.getChildren()) {
                             for (DataSnapshot foodSnap : category.getChildren()) {
                                 String foodId = foodSnap.getKey();
-                                if (foodId != null && foodId.toLowerCase().contains(query.toLowerCase())) {
+                                if (foodId != null) {
                                     FoodItem item = foodSnap.getValue(FoodItem.class);
                                     if (item != null) {
                                         item = new FoodItem(foodId, item.getDescription(), item.getImageURL(), item.getPrice());
-                                        matches.add(item);
+                                        if (foodId.toLowerCase().startsWith(queryLower)) {
+                                            prefixMatches.add(item);
+                                        } else if (foodId.toLowerCase().contains(queryLower)) {
+                                            substringMatches.add(item);
+                                        }
                                     }
                                 }
                             }
@@ -126,14 +135,18 @@ public class RestaurantActivity extends AppCompatActivity {
                     }
                 }
 
-                if (!matches.isEmpty()) {
-                    searchAdapter.updateData(matches.subList(0, Math.min(5, matches.size())));
+                List<FoodItem> mergedResults = new ArrayList<>();
+                mergedResults.addAll(prefixMatches);
+                mergedResults.addAll(substringMatches);
+
+                if (!mergedResults.isEmpty()) {
+                    searchAdapter.updateData(mergedResults.subList(0, Math.min(5, mergedResults.size())));
                     searchSuggestionsRecyclerView.setVisibility(View.VISIBLE);
-                    viewResultsButton.setText("View all " + matches.size() + " results");
+                    viewResultsButton.setText("View all " + mergedResults.size() + " results");
                     viewResultsButton.setVisibility(View.VISIBLE);
                     viewResultsButton.setOnClickListener(v -> {
                         Intent intent = new Intent(RestaurantActivity.this, ViewAllActivity.class);
-                        intent.putParcelableArrayListExtra("searchResults", new ArrayList<>(matches));
+                        intent.putParcelableArrayListExtra("searchResults", new ArrayList<>(mergedResults));
                         startActivity(intent);
                     });
                 } else {
@@ -143,7 +156,11 @@ public class RestaurantActivity extends AppCompatActivity {
                     viewResultsButton.setVisibility(View.VISIBLE);
                 }
             }
-            public void onCancelled(@NonNull DatabaseError error) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error if needed
+            }
         });
     }
 
