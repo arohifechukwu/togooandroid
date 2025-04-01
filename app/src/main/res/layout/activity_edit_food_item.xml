@@ -52,7 +52,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Food Name"
                 android:inputType="textPersonName"
-                android:layout_marginTop="12dp" />
+                android:layout_marginTop="12dp"
+                android:enabled="false"
+                android:textColorHint="@color/dark_gray" />
 
             <EditText
                 android:id="@+id/editFoodDescription"

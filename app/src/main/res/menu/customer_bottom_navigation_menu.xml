@@ -16,11 +16,11 @@
         android:tint="@color/primary_color" />
 
     <!-- Browse -->
-    <item
-        android:id="@+id/navigation_browse"
-        android:icon="@drawable/ic_browse"
-        android:title="Browse"
-        android:tint="@color/primary_color" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_browse"-->
+<!--        android:icon="@drawable/ic_browse"-->
+<!--        android:title="Browse"-->
+<!--        android:tint="@color/primary_color" />-->
 
     <!-- Orders -->
     <item

@@ -73,12 +73,30 @@
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Food Category (Only visible if 'menu' is selected) -->
+            <!-- Food Category (for 'menu' selection only) -->
             <EditText
                 android:id="@+id/categoryInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Category (for menu only)"
+                android:hint="Food Category (for 'menu')"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
+
+            <!-- Label for categoryDropdown -->
+            <TextView
+                android:id="@+id/categoryDropdownLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Existing Category"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
+
+            <!-- Dropdown (for 'menu Categories' selection only) -->
+            <Spinner
+                android:id="@+id/categoryDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:visibility="gone" />
 

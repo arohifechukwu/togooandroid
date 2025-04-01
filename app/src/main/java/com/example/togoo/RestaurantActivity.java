@@ -48,6 +48,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private List<Restaurant> restaurantList = new ArrayList<>();
     private DatabaseReference dbRef;
     private BottomNavigationView bottomNavigation;
+    private Restaurant selectedRestaurant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class RestaurantActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference("restaurant");
 
         cartButton.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
+        selectedRestaurant = getIntent().getParcelableExtra("selectedRestaurant");
 
         featuredCategoriesRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         featuredCategoriesRecyclerView.setAdapter(new FoodCategoryAdapter(this, getFeaturedCategories(), category -> {
@@ -73,7 +75,16 @@ public class RestaurantActivity extends AppCompatActivity {
             startActivity(intent);
         }));
 
-        searchAdapter = new FoodAdapter(this, new ArrayList<>(), foodItem -> {
+//        searchAdapter = new FoodAdapter(this, new ArrayList<>(), foodItem -> {
+//            Intent intent = new Intent(RestaurantActivity.this, FoodDetailActivity.class);
+//            intent.putExtra("foodId", foodItem.getId());
+//            intent.putExtra("foodDescription", foodItem.getDescription());
+//            intent.putExtra("foodImage", foodItem.getImageURL());
+//            intent.putExtra("foodPrice", foodItem.getPrice());
+//            startActivity(intent);
+//        });
+
+        searchAdapter = new FoodAdapter(this, new ArrayList<>(), selectedRestaurant, foodItem -> {
             Intent intent = new Intent(RestaurantActivity.this, FoodDetailActivity.class);
             intent.putExtra("foodId", foodItem.getId());
             intent.putExtra("foodDescription", foodItem.getDescription());
@@ -81,6 +92,7 @@ public class RestaurantActivity extends AppCompatActivity {
             intent.putExtra("foodPrice", foodItem.getPrice());
             startActivity(intent);
         });
+
         searchSuggestionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchSuggestionsRecyclerView.setAdapter(searchAdapter);
 
@@ -315,7 +327,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private boolean onNavigationItemSelected(@NonNull int item) {
         if (item == R.id.navigation_restaurant) return true;
         if (item == R.id.navigation_home) startActivity(new Intent(this, CustomerLandingActivity.class));
-        else if (item == R.id.navigation_browse) startActivity(new Intent(this, BrowseActivity.class));
+//        else if (item == R.id.navigation_browse) startActivity(new Intent(this, BrowseActivity.class));
         else if (item == R.id.navigation_order) startActivity(new Intent(this, OrderActivity.class));
         else if (item == R.id.navigation_account) startActivity(new Intent(this, AccountActivity.class));
         finish();

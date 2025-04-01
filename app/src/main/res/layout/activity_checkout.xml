@@ -150,8 +150,18 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/black" />
+
             </LinearLayout>
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/orderNoteInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Add a note for your order (optional)"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:layout_marginBottom="12dp"/>
 
         <!-- Proceed to Payment Button -->
         <Button

@@ -23,6 +23,8 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.ViewHo
     private Context context;
     private final OnQuantityChangeListener quantityChangeListener;
 
+
+
     public interface OnQuantityChangeListener {
         void onQuantityChanged();
     }

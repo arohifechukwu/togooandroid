@@ -12,12 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.togoo.utils.RestaurantHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +23,7 @@ import java.util.Map;
 public class RestaurantLandingActivity extends AppCompatActivity {
 
     private LinearLayout ordersContainer;
-    private DatabaseReference ordersRef, driversRef, customersRef;
+    private DatabaseReference ordersRef, driversRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +33,6 @@ public class RestaurantLandingActivity extends AppCompatActivity {
         ordersContainer = findViewById(R.id.ordersContainer);
         ordersRef = FirebaseDatabase.getInstance().getReference("orders");
         driversRef = FirebaseDatabase.getInstance().getReference("driver");
-        customersRef = FirebaseDatabase.getInstance().getReference("customer");
-
 
         fetchOrders();
         setupBottomNavigation();
@@ -44,121 +40,93 @@ public class RestaurantLandingActivity extends AppCompatActivity {
 
     private void fetchOrders() {
         ordersContainer.removeAllViews();
-        ordersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        String restaurantId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (restaurantId == null) {
+            Toast.makeText(this, "Restaurant UID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseReference restaurantOrdersRef = FirebaseDatabase.getInstance()
+                .getReference("ordersByRestaurant").child(restaurantId);
+
+        restaurantOrdersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean hasPendingOrders = false;
+                if (!snapshot.exists()) {
+                    showNoOrdersMessage();
+                    return;
+                }
 
-                for (DataSnapshot customerSnap : snapshot.getChildren()) {
-                    String customerId = customerSnap.getKey();
-                    for (DataSnapshot orderSnap : customerSnap.getChildren()) {
-                        String orderId = orderSnap.getKey();
-                        String status = orderSnap.child("status").getValue(String.class);
+                for (DataSnapshot orderLinkSnap : snapshot.getChildren()) {
+                    String orderId = orderLinkSnap.getKey();
 
-                        if ("pending".equals(status)) {
-                            hasPendingOrders = true;
+                    ordersRef.child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot orderSnap) {
+                            if (!orderSnap.exists()) return;
 
-                            String foodId = orderSnap.child("foodId").getValue(String.class);
-                            String foodName = orderSnap.child("foodName").getValue(String.class);
-                            String description = orderSnap.child("description").getValue(String.class);
-                            Double price = orderSnap.child("price").getValue(Double.class);
-                            String imageUrl = orderSnap.child("imageURL").getValue(String.class);
-                            String customerName = orderSnap.child("customerName").getValue(String.class);
-                            String customerEmail = orderSnap.child("customerEmail").getValue(String.class);
-                            String customerAddress = orderSnap.child("customerAddress").getValue(String.class);
-                            String customerPhone = orderSnap.child("customerPhone").getValue(String.class);
+                            String status = orderSnap.child("status").getValue(String.class);
+                            if (!"placed".equals(status)) return;
+
+                            Map<String, Object> customerMap = (Map<String, Object>) orderSnap.child("customer").getValue();
+                            String customerName = (String) customerMap.get("name");
+                            String customerPhone = (String) customerMap.get("phone");
+                            String customerAddress = (String) customerMap.get("address");
 
                             View orderView = getLayoutInflater().inflate(R.layout.item_order_request, ordersContainer, false);
                             TextView orderDetails = orderView.findViewById(R.id.orderDetails);
                             Button acceptButton = orderView.findViewById(R.id.acceptButton);
                             Button declineButton = orderView.findViewById(R.id.declineButton);
 
-                            orderDetails.setText("Order ID: " + orderId +
-                                    "\nFood ID: " + foodId +
-                                    "\nFood Name: " + foodName +
-                                    "\nDescription: " + description +
-                                    "\nPrice: $" + price +
-                                    "\nCustomer Name: " + customerName +
-                                    "\nEmail: " + customerEmail +
-                                    "\nPhone: " + customerPhone +
-                                    "\nAddress: " + customerAddress);
+                            orderDetails.setText("Order ID: " + orderId
+                                    + "\nCustomer: " + customerName
+                                    + "\nPhone: " + customerPhone
+                                    + "\nAddress: " + customerAddress);
 
                             acceptButton.setOnClickListener(v -> {
-                                updateOrderStatus(customerId, orderId, "accepted");
-                                notifyDrivers(orderId, customerId, customerAddress, customerPhone, foodName, description, price);
+                                updateOrderStatus(orderId, "accepted");
+                                notifyDrivers(orderId, customerAddress, customerPhone);
                             });
 
-                            declineButton.setOnClickListener(v -> {
-                                updateOrderStatus(customerId, orderId, "declined");
-                            });
+                            declineButton.setOnClickListener(v -> updateOrderStatus(orderId, "declined"));
 
                             ordersContainer.addView(orderView);
                         }
-                    }
-                }
 
-                // Show message if no pending orders
-                if (!hasPendingOrders) {
-                    TextView noOrdersView = new TextView(RestaurantLandingActivity.this);
-                    noOrdersView.setText("No available orders.");
-                    noOrdersView.setTextSize(16);
-                    noOrdersView.setTextColor(getResources().getColor(android.R.color.darker_gray));
-                    noOrdersView.setPadding(16, 32, 16, 32);
-                    noOrdersView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                    ordersContainer.addView(noOrdersView);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(RestaurantLandingActivity.this, "Failed to load order", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(RestaurantLandingActivity.this, "Failed to fetch orders.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RestaurantLandingActivity.this, "Failed to fetch restaurant orders", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
-        bottomNav.setSelectedItemId(R.id.navigation_orders);
-
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.navigation_orders) {
-                    return true;
-                } else if (id == R.id.navigation_new) {
-                    startActivity(new Intent(RestaurantLandingActivity.this, RestaurantNewActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_reports) {
-                    startActivity(new Intent(RestaurantLandingActivity.this, RestaurantReportActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_manage) {
-                    startActivity(new Intent(RestaurantLandingActivity.this, RestaurantManageActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_account) {
-                    startActivity(new Intent(RestaurantLandingActivity.this, RestaurantAccountActivity.class));
-                    return true;
-                }
-                return false;
-            }
-        });
+    private void updateOrderStatus(String orderId, String status) {
+        ordersRef.child(orderId).child("status").setValue(status)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Order " + status, Toast.LENGTH_SHORT).show();
+                        fetchOrders(); // Refresh
+                    } else {
+                        Toast.makeText(this, "Failed to update order", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
-    private void updateOrderStatus(String customerId, String orderId, String status) {
-        ordersRef.child(customerId).child(orderId).child("status").setValue(status);
-        Toast.makeText(this, "Order " + status, Toast.LENGTH_SHORT).show();
-        fetchOrders(); // Refresh list
-    }
-
-    private void notifyDrivers(String orderId, String customerId, String address, String phone, String food, String desc, Double price) {
+    private void notifyDrivers(String orderId, String address, String phone) {
         Map<String, Object> notification = new HashMap<>();
         notification.put("orderId", orderId);
-        notification.put("customerId", customerId);
         notification.put("address", address);
         notification.put("phone", phone);
-        notification.put("foodName", food);
-        notification.put("description", desc);
-        notification.put("price", price);
+        notification.put("status", "awaiting_driver");
 
         driversRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -172,6 +140,40 @@ public class RestaurantLandingActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(RestaurantLandingActivity.this, "Notification error.", Toast.LENGTH_SHORT).show();
             }
+        });
+    }
+
+    private void showNoOrdersMessage() {
+        TextView noOrdersView = new TextView(RestaurantLandingActivity.this);
+        noOrdersView.setText("No available orders.");
+        noOrdersView.setTextSize(16);
+        noOrdersView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        noOrdersView.setPadding(16, 32, 16, 32);
+        noOrdersView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        ordersContainer.addView(noOrdersView);
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        bottomNav.setSelectedItemId(R.id.navigation_orders);
+
+        bottomNav.setOnNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.navigation_orders) return true;
+            else if (id == R.id.navigation_new) {
+                startActivity(new Intent(this, RestaurantNewActivity.class));
+                return true;
+            } else if (id == R.id.navigation_reports) {
+                startActivity(new Intent(this, RestaurantReportActivity.class));
+                return true;
+            } else if (id == R.id.navigation_manage) {
+                startActivity(new Intent(this, RestaurantManageActivity.class));
+                return true;
+            } else if (id == R.id.navigation_account) {
+                startActivity(new Intent(this, RestaurantAccountActivity.class));
+                return true;
+            }
+            return false;
         });
     }
 }
