@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import android.location.Location;
+import android.widget.Toast;
+
 import com.google.firebase.database.GenericTypeIndicator;
 import com.example.togoo.models.OperatingHours;
 import com.example.togoo.models.LocationCoordinates;
@@ -75,14 +77,6 @@ public class RestaurantActivity extends AppCompatActivity {
             startActivity(intent);
         }));
 
-//        searchAdapter = new FoodAdapter(this, new ArrayList<>(), foodItem -> {
-//            Intent intent = new Intent(RestaurantActivity.this, FoodDetailActivity.class);
-//            intent.putExtra("foodId", foodItem.getId());
-//            intent.putExtra("foodDescription", foodItem.getDescription());
-//            intent.putExtra("foodImage", foodItem.getImageURL());
-//            intent.putExtra("foodPrice", foodItem.getPrice());
-//            startActivity(intent);
-//        });
 
         searchAdapter = new FoodAdapter(this, new ArrayList<>(), selectedRestaurant, foodItem -> {
             Intent intent = new Intent(RestaurantActivity.this, FoodDetailActivity.class);
@@ -126,6 +120,7 @@ public class RestaurantActivity extends AppCompatActivity {
                 String queryLower = query.toLowerCase();
 
                 for (DataSnapshot restaurant : snapshot.getChildren()) {
+                    String restaurantId = restaurant.getKey();
                     DataSnapshot menuNode = restaurant.child("menu");
                     if (menuNode.exists()) {
                         for (DataSnapshot category : menuNode.getChildren()) {
@@ -134,7 +129,7 @@ public class RestaurantActivity extends AppCompatActivity {
                                 if (foodId != null) {
                                     FoodItem item = foodSnap.getValue(FoodItem.class);
                                     if (item != null) {
-                                        item = new FoodItem(foodId, item.getDescription(), item.getImageURL(), item.getPrice());
+                                        item = new FoodItem(foodId, item.getDescription(), item.getImageURL(), restaurantId, item.getPrice());
                                         if (foodId.toLowerCase().startsWith(queryLower)) {
                                             prefixMatches.add(item);
                                         } else if (foodId.toLowerCase().contains(queryLower)) {
@@ -171,10 +166,11 @@ public class RestaurantActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error if needed
+                Toast.makeText(RestaurantActivity.this, "Failed to search items", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     private void fetchRestaurants() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser() != null
@@ -240,8 +236,8 @@ public class RestaurantActivity extends AppCompatActivity {
                         }
 
                         LocationCoordinates location = new LocationCoordinates();
-                        location.setLatitude(latStr != null ? latStr : "0");
-                        location.setLongitude(lonStr != null ? lonStr : "0");
+                        location.setLatitude(Double.valueOf(latStr != null ? latStr : "0"));
+                        location.setLongitude(Double.valueOf(lonStr != null ? lonStr : "0"));
 
                         String addressString = getAddressFromCoordinates(latitude, longitude);
 

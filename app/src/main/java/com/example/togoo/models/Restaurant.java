@@ -1,87 +1,8 @@
-//package com.example.togoo.models;
-//
-//import java.util.Map;
-//
-//public class Restaurant {
-//    private String id;
-//    private String name;
-//    private String address;
-//    private String imageURL;
-//    private String email;
-//    private double rating;
-//    private double distanceKm;
-//    private int etaMinutes;
-//    private LocationCoordinates location;
-//    private String restaurantLicense;
-//    private String retailLicense;
-//    private Map<String, OperatingHours> operatingHours;
-//
-//    // 🔹 Default constructor (required for Firebase)
-//    public Restaurant() {}
-//
-//    // 🔹 Main constructor used in app logic (Firebase usually doesn't use this)
-//    public Restaurant(String id, String name, String address, String imageURL,
-//                      LocationCoordinates location, Map<String, OperatingHours> operatingHours,
-//                      double rating, double distanceKm, int etaMinutes) {
-//        this.id = id;
-//        this.name = name;
-//        this.address = address;
-//        this.imageURL = imageURL;
-//        this.location = location;
-//        this.operatingHours = operatingHours;
-//        this.rating = rating;
-//        this.distanceKm = distanceKm;
-//        this.etaMinutes = etaMinutes;
-//    }
-//
-//    // 🔹 Getters
-//    public String getId() { return id; }
-//    public String getName() { return name; }
-//    public String getAddress() { return address; }
-//    public String getImageURL() { return imageURL; }
-//    public String getEmail() { return email; }
-//    public String getRestaurantLicense() { return restaurantLicense; }
-//    public String getRetailLicense() { return retailLicense; }
-//    public LocationCoordinates getLocation() { return location; }
-//    public Map<String, OperatingHours> getOperatingHours() { return operatingHours; }
-//    public double getRating() { return rating; }
-//    public double getDistanceKm() { return distanceKm; }
-//    public int getEtaMinutes() { return etaMinutes; }
-//
-//    // 🔹 Setters (important for Firebase)
-//    public void setId(String id) { this.id = id; }
-//    public void setName(String name) { this.name = name; }
-//    public void setAddress(String address) { this.address = address; }
-//    public void setImageURL(String imageURL) { this.imageURL = imageURL; }
-//    public void setEmail(String email) { this.email = email; }
-//    public void setRestaurantLicense(String restaurantLicense) { this.restaurantLicense = restaurantLicense; }
-//    public void setRetailLicense(String retailLicense) { this.retailLicense = retailLicense; }
-//    public void setLocation(LocationCoordinates location) { this.location = location; }
-//    public void setOperatingHours(Map<String, OperatingHours> operatingHours) {
-//        this.operatingHours = operatingHours;
-//    }
-//    public void setRating(double rating) { this.rating = rating; }
-//    public void setDistanceKm(double distanceKm) { this.distanceKm = distanceKm; }
-//    public void setEtaMinutes(int etaMinutes) { this.etaMinutes = etaMinutes; }
-//
-//    // 🔹 Convenience methods
-//    public double getLatitudeAsDouble() {
-//        return location != null ? location.getLatitudeAsDouble() : 0.0;
-//    }
-//
-//    public double getLongitudeAsDouble() {
-//        return location != null ? location.getLongitudeAsDouble() : 0.0;
-//    }
-//}
-
-
-
-
-
 package com.example.togoo.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.Map;
 
@@ -143,8 +64,38 @@ public class Restaurant implements Parcelable {
     public void setOperatingHours(Map<String, OperatingHours> operatingHours) {
         this.operatingHours = operatingHours;
     }
-    public void setRating(double rating) { this.rating = rating; }
-    public void setDistanceKm(double distanceKm) { this.distanceKm = distanceKm; }
+//    public void setRating(double rating) { this.rating = rating; }
+//    public void setDistanceKm(double distanceKm) { this.distanceKm = distanceKm; }
+
+    public void setRating(Object rating) {
+        if (rating instanceof String) {
+            try {
+                this.rating = Double.parseDouble((String) rating);
+            } catch (NumberFormatException e) {
+                this.rating = 4.5; // Default
+                Log.e("Restaurant", "Invalid rating format: " + rating);
+            }
+        } else if (rating instanceof Double) {
+            this.rating = (Double) rating;
+        } else {
+            this.rating = 4.5;
+        }
+    }
+
+    public void setDistanceKm(Object distanceKm) {
+        if (distanceKm instanceof String) {
+            try {
+                this.distanceKm = Double.parseDouble((String) distanceKm);
+            } catch (NumberFormatException e) {
+                this.distanceKm = 0.0;
+                Log.e("Restaurant", "Invalid distanceKm format: " + distanceKm);
+            }
+        } else if (distanceKm instanceof Double) {
+            this.distanceKm = (Double) distanceKm;
+        } else {
+            this.distanceKm = 0.0;
+        }
+    }
     public void setEtaMinutes(int etaMinutes) { this.etaMinutes = etaMinutes; }
 
     // 🔹 Convenience methods

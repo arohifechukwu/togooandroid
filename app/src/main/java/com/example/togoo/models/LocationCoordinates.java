@@ -1,61 +1,18 @@
-//package com.example.togoo.models;
-//
-//public class LocationCoordinates {
-//    private String latitude;
-//    private String longitude;
-//
-//    public LocationCoordinates() {}
-//
-//    public String getLatitude() {
-//        return latitude;
-//    }
-//
-//    public String getLongitude() {
-//        return longitude;
-//    }
-//
-//    public void setLatitude(String latitude) {
-//        this.latitude = latitude;
-//    }
-//
-//    public void setLongitude(String longitude) {
-//        this.longitude = longitude;
-//    }
-//
-//    public double getLatitudeAsDouble() {
-//        try {
-//            return Double.parseDouble(latitude);
-//        } catch (Exception e) {
-//            return 0.0;
-//        }
-//    }
-//
-//    public double getLongitudeAsDouble() {
-//        try {
-//            return Double.parseDouble(longitude);
-//        } catch (Exception e) {
-//            return 0.0;
-//        }
-//    }
-//}
-
-
-
-
 package com.example.togoo.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class LocationCoordinates implements Parcelable {
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
 
     public LocationCoordinates() {}
 
     protected LocationCoordinates(Parcel in) {
-        latitude = in.readString();
-        longitude = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
     }
 
     public static final Creator<LocationCoordinates> CREATOR = new Creator<LocationCoordinates>() {
@@ -70,36 +27,50 @@ public class LocationCoordinates implements Parcelable {
         }
     };
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public void setLatitude(Object latitude) {  // Changed to Object to handle String or Double
+        if (latitude instanceof String) {
+            try {
+                this.latitude = Double.parseDouble((String) latitude);
+            } catch (NumberFormatException e) {
+                this.latitude = 0.0;
+                Log.e("LocationCoordinates", "Invalid latitude format: " + latitude);
+            }
+        } else if (latitude instanceof Double) {
+            this.latitude = (Double) latitude;
+        } else {
+            this.latitude = 0.0;
+        }
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
+    public void setLongitude(Object longitude) {  // Changed to Object to handle String or Double
+        if (longitude instanceof String) {
+            try {
+                this.longitude = Double.parseDouble((String) longitude);
+            } catch (NumberFormatException e) {
+                this.longitude = 0.0;
+                Log.e("LocationCoordinates", "Invalid longitude format: " + longitude);
+            }
+        } else if (longitude instanceof Double) {
+            this.longitude = (Double) longitude;
+        } else {
+            this.longitude = 0.0;
+        }
     }
 
     public double getLatitudeAsDouble() {
-        try {
-            return Double.parseDouble(latitude);
-        } catch (Exception e) {
-            return 0.0;
-        }
+        return latitude != null ? latitude : 0.0;
     }
 
     public double getLongitudeAsDouble() {
-        try {
-            return Double.parseDouble(longitude);
-        } catch (Exception e) {
-            return 0.0;
-        }
+        return longitude != null ? longitude : 0.0;
     }
 
     @Override
@@ -109,7 +80,7 @@ public class LocationCoordinates implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(latitude);
-        dest.writeString(longitude);
+        dest.writeDouble(latitude != null ? latitude : 0.0);
+        dest.writeDouble(longitude != null ? longitude : 0.0);
     }
 }

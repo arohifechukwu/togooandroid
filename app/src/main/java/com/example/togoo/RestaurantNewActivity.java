@@ -133,42 +133,7 @@ public class RestaurantNewActivity extends AppCompatActivity {
         }
     }
 
-//    private void validateAndSave() {
-//        String foodId = foodIdInput.getText().toString().trim();
-//        String desc = descriptionInput.getText().toString().trim();
-//        String priceStr = priceInput.getText().toString().trim();
-//        String node = nodeSelector.getSelectedItem().toString();
-//        String category = "";
-//
-//        // Get category based on selection type
-//        if ("New Menu Category".equals(node)) {
-//            category = categoryInput.getText().toString().trim();
-//        } else if ("Update Menu Category".equals(node) && categoryDropdown.getSelectedItem() != null) {
-//            category = categoryDropdown.getSelectedItem().toString();
-//        }
-//
-//        // Validate required fields
-//        if (TextUtils.isEmpty(foodId) ||
-//                TextUtils.isEmpty(desc) ||
-//                TextUtils.isEmpty(priceStr) ||
-//                imageUri == null ||
-//                (("New Menu Category".equals(node) || "Update Menu Category".equals(node)) && TextUtils.isEmpty(category))) {
-//            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        // Validate price format
-//        double price;
-//        try {
-//            price = Double.parseDouble(priceStr);
-//        } catch (NumberFormatException e) {
-//            Toast.makeText(this, "Invalid price format. Example: 4.50", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        // Proceed to upload
-//        uploadImageAndSave(node, foodId, desc, price, category);
-//    }
+
 
     private void validateAndSave() {
         String foodId = foodIdInput.getText().toString().trim();
@@ -242,6 +207,8 @@ public class RestaurantNewActivity extends AppCompatActivity {
     }
 
 
+
+
     private void uploadImageAndSave(String node, String foodId, String desc, double price, String category) {
         String imageName = UUID.randomUUID().toString();
         StorageReference storageRef = FirebaseStorage.getInstance()
@@ -251,7 +218,8 @@ public class RestaurantNewActivity extends AppCompatActivity {
 
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    FoodItem foodItem = new FoodItem(foodId, desc, uri.toString(), price);
+                    String restaurantId = restaurantUID; // Using restaurantUID as the restaurant's ID
+                    FoodItem foodItem = new FoodItem(foodId, restaurantId, desc, uri.toString(), price);
                     DatabaseReference ref;
                     if ("New Menu Category".equals(node) || "Update Menu Category".equals(node)) {
                         ref = restaurantRef.child("menu").child(category).child(foodId);
@@ -262,10 +230,10 @@ public class RestaurantNewActivity extends AppCompatActivity {
                         Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show();
                         clearInputs();
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(this, "Failed to add item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to add item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
                 }))
-                .addOnFailureListener(e -> Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void clearInputs() {

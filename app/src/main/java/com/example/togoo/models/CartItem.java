@@ -10,13 +10,15 @@ public class CartItem implements Parcelable {
     private String foodImage;
     private double foodPrice;
     private int quantity;
+    private String restaurantId;
 
     public CartItem() { }
 
-    public CartItem(String foodId, String foodDescription, String foodImage, double foodPrice, int quantity) {
+    public CartItem(String foodId, String foodDescription, String foodImage, String restaurantId, double foodPrice, int quantity) {
         this.foodId = foodId;
         this.foodDescription = foodDescription;
         this.foodImage = foodImage;
+        this.restaurantId = restaurantId;
         this.foodPrice = foodPrice;
         this.quantity = quantity;
     }
@@ -26,6 +28,7 @@ public class CartItem implements Parcelable {
         foodId = in.readString();
         foodDescription = in.readString();
         foodImage = in.readString();
+        restaurantId = in.readString();
         foodPrice = in.readDouble();
         quantity = in.readInt();
     }
@@ -43,37 +46,20 @@ public class CartItem implements Parcelable {
     };
 
     // Getters and setters
-    public String getCartItemId() {
-        return cartItemId;
-    }
-
-    public void setCartItemId(String cartItemId) {
-        this.cartItemId = cartItemId;
-    }
-
-    public String getFoodId() {
-        return foodId;
-    }
-
-    public String getFoodDescription() {
-        return foodDescription;
-    }
-
-    public String getFoodImage() {
-        return foodImage;
-    }
-
-    public double getFoodPrice() {
-        return foodPrice;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public String getCartItemId() { return cartItemId; }
+    public void setCartItemId(String cartItemId) { this.cartItemId = cartItemId; }
+    public String getRestaurantId() { return restaurantId; }
+    public void setRestaurantId(String restaurantId) { this.restaurantId = restaurantId; }
+    public String getFoodId() { return foodId; }
+    public void setFoodId(String foodId) { this.foodId = foodId; }
+    public String getFoodDescription() { return foodDescription; }
+    public void setFoodDescription(String foodDescription) { this.foodDescription = foodDescription; }
+    public String getFoodImage() { return foodImage; }
+    public void setFoodImage(String foodImage) { this.foodImage = foodImage; }
+    public double getFoodPrice() { return foodPrice; }
+    public void setFoodPrice(double foodPrice) { this.foodPrice = foodPrice; }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -81,6 +67,7 @@ public class CartItem implements Parcelable {
         dest.writeString(foodId);
         dest.writeString(foodDescription);
         dest.writeString(foodImage);
+        dest.writeString(restaurantId);
         dest.writeDouble(foodPrice);
         dest.writeInt(quantity);
     }
