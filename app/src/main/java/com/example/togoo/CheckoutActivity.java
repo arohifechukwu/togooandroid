@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.RadioGroup;
 
 import com.example.togoo.adapters.CheckoutAdapter;
 import com.example.togoo.utils.RestaurantHelper;
@@ -46,6 +47,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private double totalAmount = 0.0;
 
     private Customer currentCustomer;
+    private RadioGroup paymentMethodGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class CheckoutActivity extends AppCompatActivity {
         btnProceedToPayment = findViewById(R.id.btnProceedToPayment);
         btnCancelOrder = findViewById(R.id.btnCancelOrder);
         orderNoteInput = findViewById(R.id.orderNoteInput);
+        paymentMethodGroup = findViewById(R.id.paymentMethodGroup);
 
         checkoutItemList = getIntent().getParcelableArrayListExtra("cartItems");
         if (checkoutItemList != null) {
@@ -187,12 +190,21 @@ public class CheckoutActivity extends AppCompatActivity {
             }
         }
 
+        // Capture the payment method selection
+        String paymentMethod = "Card"; // default
+        int selectedId = paymentMethodGroup.getCheckedRadioButtonId();
+        if (selectedId != -1) {
+            // Retrieve the selected RadioButton's text
+            paymentMethod = ((android.widget.RadioButton) findViewById(selectedId)).getText().toString();
+        }
+
         Intent intent = new Intent(CheckoutActivity.this, PaymentActivity.class);
         intent.putParcelableArrayListExtra("checkoutItems", new ArrayList<>(checkoutItemList));
         intent.putExtra("checkoutTotal", totalAmount);
         intent.putExtra("currentCustomer", currentCustomer);
         intent.putExtra("selectedRestaurant", currentRestaurant);
         intent.putExtra("orderNote", orderNoteInput.getText().toString().trim());
+        intent.putExtra("paymentMethod", paymentMethod);
         startActivity(intent);
     }
 }

@@ -4,4 +4,13 @@
         <item>restaurant</item>
         <item>driver</item>
     </string-array>
+
+    //order filters
+    <string-array name="order_filters">
+        <item>Order ID</item>
+        <item>Customer</item>
+        <item>Status</item>
+        <item>Timestamp</item>
+    </string-array>
+
 </resources>

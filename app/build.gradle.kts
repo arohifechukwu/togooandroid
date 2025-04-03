@@ -54,6 +54,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage:20.1.0")
     implementation ("com.google.firebase:firebase-database:20.0.5")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
     implementation(libs.firebase.functions)
     implementation(libs.play.services.location)
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha12")

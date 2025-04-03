@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent = new Intent(LoginActivity.this, CustomerLandingActivity.class);
                 break;
             case "driver":
-                intent = new Intent(LoginActivity.this, DriverLandingActivity.class);
+                intent = new Intent(LoginActivity.this, DriverNotificationsActivity.class);
                 break;
             case "restaurant":
                 intent = new Intent(LoginActivity.this, RestaurantLandingActivity.class);

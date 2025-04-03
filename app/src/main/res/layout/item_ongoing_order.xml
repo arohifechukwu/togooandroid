@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/orderCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="6dp"
     android:layout_margin="8dp"
+    android:elevation="6dp"
     android:backgroundTint="@android:color/white">
 
     <LinearLayout
@@ -16,40 +13,37 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/orderDetails"
+            android:id="@+id/ongoingOrderDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Order details here"
+            android:text="Order summary"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
             android:lineSpacingExtra="4dp" />
 
         <LinearLayout
-            android:id="@+id/primaryButtonsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:gravity="end">
+            android:gravity="end"
+            android:layout_marginTop="12dp">
 
             <Button
-                android:id="@+id/declineButton"
+                android:id="@+id/prepareButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Decline"
+                android:text="Preparing"
+                android:backgroundTint="@android:color/holo_orange_dark"
                 android:textColor="@android:color/white"
-                android:backgroundTint="@android:color/holo_red_dark"
-                android:layout_marginEnd="8dp"
-                android:minWidth="96dp" />
+                android:layout_marginEnd="8dp" />
 
             <Button
-                android:id="@+id/acceptButton"
+                android:id="@+id/readyButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Accept"
-                android:textColor="@android:color/white"
+                android:text="Ready for Pickup"
                 android:backgroundTint="@android:color/holo_green_dark"
-                android:minWidth="96dp" />
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </LinearLayout>

@@ -168,6 +168,12 @@ public class PaymentActivity extends AppCompatActivity {
 
 
     private void storeOrderToFirebase(String status, String transactionId) {
+        // Get the payment method from the Intent extra
+        String paymentMethod = getIntent().getStringExtra("paymentMethod");
+        if (paymentMethod == null) {
+            paymentMethod = "Card"; // default
+        }
+
         String orderId = FirebaseDatabase.getInstance().getReference("orders").push().getKey();
         if (orderId == null) {
             Log.e("FirebaseDebug", "Failed to generate order ID");
@@ -198,9 +204,13 @@ public class PaymentActivity extends AppCompatActivity {
         paymentInfo.put("total", checkoutTotal);
         paymentInfo.put("status", status);
         paymentInfo.put("transactionId", transactionId);
+        paymentInfo.put("method", paymentMethod);
 
         Map<String, Object> timestamps = new HashMap<>();
         timestamps.put("placed", placedTime);
+        timestamps.put("restaurantAccepted", "pending");
+        timestamps.put("driverAssigned", "pending");
+        timestamps.put("delivered", "pending");
 
         Map<String, Object> logEntry = new HashMap<>();
         logEntry.put("timestamp", placedTime);
@@ -222,7 +232,7 @@ public class PaymentActivity extends AppCompatActivity {
         orderData.put("timestamps", timestamps);
         orderData.put("updateLogs", Collections.singletonList(logEntry));
         orderData.put("dispute", disputeInfo);
-        orderData.put("notes", orderNote != null ? orderNote : ""); // ✅ Correct place for notes
+        orderData.put("notes", orderNote != null ? orderNote : "");
 
         Log.d("OrderDebug", "restaurant: " + (restaurant != null ? restaurant.getName() : "null"));
 

@@ -163,6 +163,34 @@
             android:minLines="2"
             android:layout_marginBottom="12dp"/>
 
+        <!-- Payment Method -->
+        <RadioGroup
+            android:id="@+id/paymentMethodGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <RadioButton
+                android:id="@+id/rbCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Card"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rbCash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cash" />
+
+            <RadioButton
+                android:id="@+id/rbApplePay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apple Pay" />
+        </RadioGroup>
+
         <!-- Proceed to Payment Button -->
         <Button
             android:id="@+id/btnProceedToPayment"
