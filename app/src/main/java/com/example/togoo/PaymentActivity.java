@@ -166,13 +166,16 @@ public class PaymentActivity extends AppCompatActivity {
 
 
 
-
     private void storeOrderToFirebase(String status, String transactionId) {
-        // Get the payment method from the Intent extra
         String paymentMethod = getIntent().getStringExtra("paymentMethod");
-        if (paymentMethod == null) {
-            paymentMethod = "Card"; // default
+        if (paymentMethod == null) paymentMethod = "Card";
+
+        double deliveryFare = 5.00;
+        double subtotalBeforeTax = 0.0;
+        for (CartItem item : cartItems) {
+            subtotalBeforeTax += item.getFoodPrice() * item.getQuantity();
         }
+        double tips = subtotalBeforeTax * 0.10;
 
         String orderId = FirebaseDatabase.getInstance().getReference("orders").push().getKey();
         if (orderId == null) {
@@ -183,15 +186,12 @@ public class PaymentActivity extends AppCompatActivity {
         String placedTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
                 .format(new java.util.Date());
 
-        Log.d("FirebaseDebug", "Creating order with ID: " + orderId);
-
         Map<String, Object> customerInfo = new HashMap<>();
         customerInfo.put("id", customer != null ? customer.getId() : "null");
         customerInfo.put("name", customer != null ? customer.getName() : "null");
         customerInfo.put("phone", customer != null ? customer.getPhone() : "null");
         customerInfo.put("address", customer != null ? customer.getAddress() : "null");
 
-        Restaurant restaurant = RestaurantHelper.getCurrentRestaurant();
         Map<String, Object> restaurantInfo = new HashMap<>();
         restaurantInfo.put("id", restaurant.getId());
         restaurantInfo.put("name", restaurant.getName());
@@ -201,6 +201,9 @@ public class PaymentActivity extends AppCompatActivity {
         orderDetails.put("items", cartItems != null ? cartItems : new ArrayList<>());
 
         Map<String, Object> paymentInfo = new HashMap<>();
+        paymentInfo.put("subtotalBeforeTax", subtotalBeforeTax);
+        paymentInfo.put("deliveryFare", deliveryFare);
+        paymentInfo.put("tips", tips);
         paymentInfo.put("total", checkoutTotal);
         paymentInfo.put("status", status);
         paymentInfo.put("transactionId", transactionId);

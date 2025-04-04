@@ -15,6 +15,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
+        <!-- Notification details -->
         <TextView
             android:id="@+id/notificationText"
             android:layout_width="match_parent"
@@ -22,5 +23,14 @@
             android:text="Notification Details"
             android:textSize="16sp"
             android:textColor="@android:color/black" />
+
+        <!-- Delete Button -->
+        <Button
+            android:id="@+id/btnDeleteNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

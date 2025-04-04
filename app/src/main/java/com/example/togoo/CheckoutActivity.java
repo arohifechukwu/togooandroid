@@ -36,6 +36,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private RecyclerView checkoutRecyclerView;
     private TextView subtotalText, gstText, qstText, totalText;
+    private TextView deliveryFareText, tipsText;
     private EditText orderNoteInput;
     private Button btnProceedToPayment, btnCancelOrder;
 
@@ -44,6 +45,9 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private static final double GST_RATE = 0.05;
     private static final double QST_RATE = 0.09975;
+    private static final double DELIVERY_FARE = 5.00;
+    private static final double TIP_PERCENTAGE = 0.10;
+
     private double totalAmount = 0.0;
 
     private Customer currentCustomer;
@@ -71,6 +75,9 @@ public class CheckoutActivity extends AppCompatActivity {
         orderNoteInput = findViewById(R.id.orderNoteInput);
         paymentMethodGroup = findViewById(R.id.paymentMethodGroup);
 
+        deliveryFareText = findViewById(R.id.deliveryFareText);
+        tipsText = findViewById(R.id.tipsText);
+
         checkoutItemList = getIntent().getParcelableArrayListExtra("cartItems");
         if (checkoutItemList != null) {
             for (CartItem item : checkoutItemList) {
@@ -83,8 +90,6 @@ public class CheckoutActivity extends AppCompatActivity {
         } else {
             Log.e("CheckoutDebug", "checkoutItemList is null");
         }
-
-        checkoutItemList = getIntent().getParcelableArrayListExtra("cartItems");
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference customerRef = FirebaseDatabase.getInstance().getReference("customer").child(uid);
@@ -155,24 +160,25 @@ public class CheckoutActivity extends AppCompatActivity {
             subtotal += item.getFoodPrice() * item.getQuantity();
         }
 
+        double tips = subtotal * TIP_PERCENTAGE;
         double gst = subtotal * GST_RATE;
         double qst = subtotal * QST_RATE;
-        double total = subtotal + gst + qst;
 
+        double total = subtotal + tips + DELIVERY_FARE + gst + qst;
         totalAmount = total;
 
         subtotalText.setText(String.format("$%.2f", subtotal));
+        deliveryFareText.setText(String.format("$%.2f", DELIVERY_FARE));
+        tipsText.setText(String.format("$%.2f", tips));
         gstText.setText(String.format("$%.2f", gst));
         qstText.setText(String.format("$%.2f", qst));
         totalText.setText(String.format("$%.2f", total));
     }
 
-
-
     private void proceedToPayment() {
         Restaurant currentRestaurant = getIntent().getParcelableExtra("selectedRestaurant");
         if (currentRestaurant == null) {
-            currentRestaurant = RestaurantHelper.getCurrentRestaurant(); // Fallback
+            currentRestaurant = RestaurantHelper.getCurrentRestaurant();
             if (currentRestaurant == null) {
                 Toast.makeText(this, "Restaurant info missing. Please try again.", Toast.LENGTH_LONG).show();
                 return;
@@ -190,11 +196,9 @@ public class CheckoutActivity extends AppCompatActivity {
             }
         }
 
-        // Capture the payment method selection
-        String paymentMethod = "Card"; // default
+        String paymentMethod = "Card";
         int selectedId = paymentMethodGroup.getCheckedRadioButtonId();
         if (selectedId != -1) {
-            // Retrieve the selected RadioButton's text
             paymentMethod = ((android.widget.RadioButton) findViewById(selectedId)).getText().toString();
         }
 

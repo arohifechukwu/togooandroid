@@ -7,7 +7,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Optionally, include a Toolbar here -->
+
+    <!-- Header Title -->
+    <TextView
+        android:id="@+id/settingTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Available Orders"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/primary_color"
+        android:textColor="@color/white" />
 
     <!-- Orders Container in a ScrollView -->
     <ScrollView

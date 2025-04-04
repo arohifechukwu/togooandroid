@@ -12,7 +12,7 @@
         android:id="@+id/headerTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Available Orders"
+        android:text="Notifications"
         android:textSize="20sp"
         android:textColor="@android:color/white"
         android:background="?attr/colorPrimary"

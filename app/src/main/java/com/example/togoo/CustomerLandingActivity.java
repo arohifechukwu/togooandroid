@@ -15,6 +15,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.view.Gravity;
+import android.graphics.Color;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,11 +60,38 @@ public class CustomerLandingActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigation;
     private DatabaseReference dbReference;
     private FoodAdapter searchAdapter; // Adapter for suggestions
+    private ImageButton notificationButton;
+    private TextView notificationBadge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_landing);
+
+        // Initialize notification UI
+        FrameLayout topBarContainer = findViewById(R.id.topBarContainer);
+        notificationButton = new ImageButton(this);
+        notificationButton.setBackgroundColor(Color.TRANSPARENT);
+        notificationButton.setImageResource(R.drawable.ic_notification); // 🔔 Your notification icon
+        notificationButton.setContentDescription("Notifications");
+        FrameLayout.LayoutParams notifParams = new FrameLayout.LayoutParams(80, 80);
+        notifParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        notifParams.setMargins(0, 0, 140, 0); // Padding between cart and notification
+        topBarContainer.addView(notificationButton, notifParams);
+
+        notificationBadge = new TextView(this);
+        notificationBadge.setBackgroundResource(R.drawable.badge_background); // 🔔 Create red circle drawable
+        notificationBadge.setTextColor(Color.WHITE);
+        notificationBadge.setTextSize(12);
+        notificationBadge.setPadding(8, 2, 8, 2);
+        notificationBadge.setVisibility(View.GONE);
+        FrameLayout.LayoutParams badgeParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        badgeParams.gravity = Gravity.END;
+        badgeParams.setMargins(0, 0, 100, 40);
+        topBarContainer.addView(notificationBadge, badgeParams);
+
+        notificationButton.setOnClickListener(v -> startActivity(new Intent(this, NotificationsActivity.class)));
+        listenForNotificationUpdates();
 
         // Initialize UI components
         locationText = findViewById(R.id.locationText);
@@ -94,6 +126,45 @@ public class CustomerLandingActivity extends AppCompatActivity {
 
         cartButton.setOnClickListener(v -> startActivity(new Intent(CustomerLandingActivity.this, CartActivity.class)));
 
+//notification badge logic
+        final int[] updateCount = {0}; // Wrapper array to allow mutation
+
+        notificationBadge = findViewById(R.id.notificationBadge);
+        notificationButton = findViewById(R.id.notificationButton);
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference updatesRef = FirebaseDatabase.getInstance().getReference("orders");
+
+        updatesRef.orderByChild("customer/id").equalTo(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        updateCount[0] = 0;
+                        for (DataSnapshot orderSnap : snapshot.getChildren()) {
+                            if (orderSnap.hasChild("updateLogs")) {
+                                long logCount = orderSnap.child("updateLogs").getChildrenCount();
+                                updateCount[0] += (int) logCount;
+                            }
+                        }
+
+                        if (updateCount[0] > 0) {
+                            notificationBadge.setText(String.valueOf(updateCount[0]));
+                            notificationBadge.setVisibility(View.VISIBLE);
+                        } else {
+                            notificationBadge.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("NotificationBadge", "Failed to fetch notifications.");
+                    }
+                });
+
+        notificationButton.setOnClickListener(v -> {
+            startActivity(new Intent(CustomerLandingActivity.this, NotificationsActivity.class));
+        });
+
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -116,6 +187,39 @@ public class CustomerLandingActivity extends AppCompatActivity {
         bottomNavigation.setSelectedItemId(R.id.navigation_home);
         bottomNavigation.setOnNavigationItemSelectedListener(item -> onNavigationItemSelected(item.getItemId()));
     }
+
+    private void listenForNotificationUpdates() {
+        if (notificationBadge == null || notificationButton == null) return;
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference updatesRef = FirebaseDatabase.getInstance().getReference("orders");
+
+        updatesRef.orderByChild("customer/id").equalTo(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int count = 0;
+                        for (DataSnapshot orderSnap : snapshot.getChildren()) {
+                            if (orderSnap.hasChild("updateLogs")) {
+                                count += (int) orderSnap.child("updateLogs").getChildrenCount();
+                            }
+                        }
+
+                        if (count > 0) {
+                            notificationBadge.setText(String.valueOf(count));
+                            notificationBadge.setVisibility(View.VISIBLE);
+                        } else {
+                            notificationBadge.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("NotificationBadge", "Failed to fetch notifications.");
+                    }
+                });
+    }
+
 
     // 🔹 Fetch Customer Location
 

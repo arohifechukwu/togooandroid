@@ -49,7 +49,7 @@ import java.util.TimeZone;
 public class RestaurantPageActivity extends AppCompatActivity {
 
     private ImageView restaurantImage;
-    private TextView restaurantName, restaurantDistance, operatingHoursStatus;
+    private TextView restaurantName, restaurantRating, restaurantAddress, restaurantDistance, operatingHoursStatus;
     private RecyclerView featuredItemsRecyclerView, moreToExploreRecyclerView;
     private LinearLayout menuContainer;
 
@@ -76,6 +76,8 @@ public class RestaurantPageActivity extends AppCompatActivity {
 
         restaurantImage = findViewById(R.id.restaurantImage);
         restaurantName = findViewById(R.id.restaurantName);
+        restaurantRating = findViewById(R.id.restaurantRating);
+        restaurantAddress = findViewById(R.id.restaurantAddress);
         restaurantDistance = findViewById(R.id.restaurantDistance);
         operatingHoursStatus = findViewById(R.id.operatingHoursStatus);
         featuredItemsRecyclerView = findViewById(R.id.featuredItemsRecyclerView);
@@ -166,6 +168,8 @@ public class RestaurantPageActivity extends AppCompatActivity {
                     }
 
                     restaurantName.setText(name != null ? name : "Unnamed Restaurant");
+                    restaurantRating.setText("⭐ " + String.format(Locale.getDefault(), "%.1f", currentRestaurant.getRating()));
+                    restaurantAddress.setText(address != null ? address : "Address unavailable");
                     updateDistanceDisplay();
                     fetchAndValidateOperatingHours();
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ public class DriverNotificationsActivity extends AppCompatActivity {
 
     private LinearLayout notificationsContainer;
     private DatabaseReference notificationsRef;
+    private DatabaseReference driverAvailabilityRef;
     private String driverId;
 
     @Override
@@ -31,11 +33,30 @@ public class DriverNotificationsActivity extends AppCompatActivity {
 
         // Get current driver's UID.
         driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        // Reference to the notifications node for this driver.
-        notificationsRef = FirebaseDatabase.getInstance().getReference("driver")
-                .child(driverId).child("notifications");
 
-        loadNotifications();
+        // Check the driver's availability first.
+        driverAvailabilityRef = FirebaseDatabase.getInstance()
+                .getReference("driver")
+                .child(driverId)
+                .child("availability");
+        driverAvailabilityRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String availability = snapshot.getValue(String.class);
+                if (availability == null || !availability.equalsIgnoreCase("available")) {
+                    showOfflineMessage();
+                } else {
+                    // Driver is available so load notifications.
+                    notificationsRef = FirebaseDatabase.getInstance().getReference("driver")
+                            .child(driverId).child("notifications");
+                    loadNotifications();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(DriverNotificationsActivity.this, "Failed to check availability", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadNotifications() {
@@ -57,11 +78,24 @@ public class DriverNotificationsActivity extends AppCompatActivity {
                             View itemView = LayoutInflater.from(DriverNotificationsActivity.this)
                                     .inflate(R.layout.item_driver_notification, notificationsContainer, false);
                             TextView notificationText = itemView.findViewById(R.id.notificationText);
+                            Button btnDelete = itemView.findViewById(R.id.btnDeleteNotification);
 
-                            // Display notification details – here, Order ID and status.
+                            // Display notification details – for example, Order ID and status.
                             String orderId = (String) notif.get("orderId");
                             String displayText = "Order ID: " + orderId + "\nStatus: " + status;
                             notificationText.setText(displayText);
+
+                            // Set delete button click listener.
+                            btnDelete.setOnClickListener(v -> {
+                                // Delete this notification from the database.
+                                notifSnap.getRef().removeValue().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(DriverNotificationsActivity.this, "Notification deleted", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(DriverNotificationsActivity.this, "Failed to delete notification", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            });
 
                             notificationsContainer.addView(itemView);
                             found = true;
@@ -88,6 +122,18 @@ public class DriverNotificationsActivity extends AppCompatActivity {
         noNotifView.setPadding(16, 32, 16, 32);
         noNotifView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         notificationsContainer.addView(noNotifView);
+    }
+
+    // When driver is offline, show this message instead of loading notifications.
+    private void showOfflineMessage() {
+        notificationsContainer.removeAllViews();
+        TextView offlineView = new TextView(this);
+        offlineView.setText("You are currently offline, update your availability to view your notifications.");
+        offlineView.setTextSize(16);
+        offlineView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        offlineView.setPadding(16, 32, 16, 32);
+        offlineView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        notificationsContainer.addView(offlineView);
     }
 
     private void setupBottomNavigation(){

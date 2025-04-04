@@ -53,6 +53,28 @@
                 android:textStyle="bold"
                 android:textColor="@color/black" />
 
+            <!-- Restaurant Rating -->
+            <TextView
+                android:id="@+id/restaurantRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="16dp"
+                android:text="⭐ 4.5"
+                android:textSize="16sp"
+                android:textColor="@color/primary_variant" />
+
+            <!-- Restaurant Address -->
+            <TextView
+                android:id="@+id/restaurantAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="16dp"
+                android:text="123 Main St, Montreal"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray" />
+
             <!-- Distance -->
             <TextView
                 android:id="@+id/restaurantDistance"
