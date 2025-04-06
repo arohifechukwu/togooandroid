@@ -61,6 +61,8 @@ public class RestaurantPageActivity extends AppCompatActivity {
     private double userLatitude, userLongitude;
 
     private FoodAdapter featuredItemsAdapter, moreToExploreAdapter;
+    private int commentsShown = 0;
+    private final int COMMENTS_BATCH = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +160,7 @@ public class RestaurantPageActivity extends AppCompatActivity {
 
                     RestaurantHelper.setCurrentRestaurant(currentRestaurant);
 
-                    if (!imageUrl.isEmpty()) {
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
                         Glide.with(RestaurantPageActivity.this)
                                 .load(imageUrl)
                                 .placeholder(R.drawable.ic_restaurant_placeholder)
@@ -172,6 +174,51 @@ public class RestaurantPageActivity extends AppCompatActivity {
                     restaurantAddress.setText(address != null ? address : "Address unavailable");
                     updateDistanceDisplay();
                     fetchAndValidateOperatingHours();
+
+                    LinearLayout commentsContainer = findViewById(R.id.commentsContainer);
+                    commentsContainer.removeAllViews(); // Clear old comments if any
+
+                    DatabaseReference commentsRef = FirebaseDatabase.getInstance()
+                            .getReference("restaurant")
+                            .child(currentRestaurant.getId())
+                            .child("ratings");
+
+                    commentsRef.orderByChild("timestamp").limitToLast(3)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    List<DataSnapshot> commentList = new ArrayList<>();
+                                    for (DataSnapshot child : snapshot.getChildren()) {
+                                        commentList.add(child);
+                                    }
+
+                                    // Sort newest first
+                                    commentList.sort((a, b) -> {
+                                        Long t1 = a.child("timestamp").getValue(Long.class);
+                                        Long t2 = b.child("timestamp").getValue(Long.class);
+                                        return Long.compare(t2 != null ? t2 : 0, t1 != null ? t1 : 0);
+                                    });
+
+                                    for (DataSnapshot commentSnap : commentList) {
+                                        String comment = commentSnap.child("comment").getValue(String.class);
+                                        Float rating = commentSnap.child("value").getValue(Float.class);
+
+                                        if (comment != null && !comment.isEmpty()) {
+                                            TextView commentView = new TextView(RestaurantPageActivity.this);
+                                            commentView.setText("⭐ " + rating + " — " + comment);
+                                            commentView.setTextSize(14);
+                                            commentView.setPadding(0, 8, 0, 8);
+                                            commentsContainer.addView(commentView);
+                                            fetchReviewComments(0);
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e("Comments", "Failed to load comments", error.toException());
+                                }
+                            });
 
                 } else {
                     restaurantName.setText("Restaurant not found.");
@@ -484,6 +531,87 @@ public class RestaurantPageActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("MoreToExplore", "Failed to fetch restaurants: " + error.getMessage());
+            }
+        });
+    }
+
+
+    private void fetchReviewComments(int startIndex) {
+        LinearLayout commentsContainer = findViewById(R.id.commentsContainer);
+        TextView summaryText = findViewById(R.id.reviewSummary);
+        TextView viewMore = findViewById(R.id.viewMoreComments);
+
+        DatabaseReference ratingsRef = FirebaseDatabase.getInstance()
+                .getReference("restaurant")
+                .child(currentRestaurant.getId())
+                .child("ratings");
+
+        ratingsRef.orderByChild("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<DataSnapshot> allComments = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String comment = child.child("comment").getValue(String.class);
+                    if (comment != null && !comment.isEmpty()) {
+                        allComments.add(child);
+                    }
+                }
+
+                int totalComments = allComments.size();
+                summaryText.setText(totalComments + " review" + (totalComments != 1 ? "s" : ""));
+
+                // Sort newest first
+                allComments.sort((a, b) -> {
+                    Long t1 = a.child("timestamp").getValue(Long.class);
+                    Long t2 = b.child("timestamp").getValue(Long.class);
+                    return Long.compare(t2 != null ? t2 : 0, t1 != null ? t1 : 0);
+                });
+
+                int endIndex = Math.min(startIndex + COMMENTS_BATCH, totalComments);
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    DataSnapshot commentSnap = allComments.get(i);
+                    String comment = commentSnap.child("comment").getValue(String.class);
+                    Float rating = commentSnap.child("value").getValue(Float.class);
+                    String userId = commentSnap.getKey(); // customerId
+
+                    TextView commentView = new TextView(RestaurantPageActivity.this);
+                    commentView.setText("⭐ " + rating + " — " + comment);
+                    commentView.setTextSize(14);
+                    commentView.setPadding(0, 8, 0, 8);
+                    commentsContainer.addView(commentView);
+
+                    DatabaseReference customerRef = FirebaseDatabase.getInstance()
+                            .getReference("customer")
+                            .child(userId);
+
+                    customerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String name = dataSnapshot.child("name").getValue(String.class);
+                            commentView.setText("⭐ " + rating + " — " + (name != null ? name : "User") + ": " + comment);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            commentView.setText("⭐ " + rating + " — User: " + comment);
+                        }
+                    });
+                }
+
+                commentsShown += COMMENTS_BATCH;
+
+                if (commentsShown < totalComments) {
+                    viewMore.setVisibility(View.VISIBLE);
+                    viewMore.setOnClickListener(v -> fetchReviewComments(commentsShown));
+                } else {
+                    viewMore.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ReviewComments", "Failed to fetch comments", error.toException());
             }
         });
     }

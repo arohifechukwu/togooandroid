@@ -289,27 +289,25 @@ public class RestaurantManageActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
         bottomNav.setSelectedItemId(R.id.navigation_manage);
 
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.navigation_manage) {
-                    return true;
-                } else if (id == R.id.navigation_new) {
-                    startActivity(new Intent(RestaurantManageActivity.this, RestaurantNewActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_reports) {
-                    startActivity(new Intent(RestaurantManageActivity.this, RestaurantReportActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_orders) {
-                    startActivity(new Intent(RestaurantManageActivity.this, RestaurantLandingActivity.class));
-                    return true;
-                } else if (id == R.id.navigation_account) {
-                    startActivity(new Intent(RestaurantManageActivity.this, RestaurantAccountActivity.class));
-                    return true;
-                }
-                return false;
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.navigation_manage) {
+                // Already on this page — no action
+                return true;
+            } else if (id == R.id.navigation_new) {
+                startActivity(new Intent(this, RestaurantNewActivity.class));
+                return true;
+            } else if (id == R.id.navigation_reports) {
+                startActivity(new Intent(this, RestaurantReportActivity.class));
+                return true;
+            } else if (id == R.id.navigation_orders) {
+                startActivity(new Intent(this, RestaurantLandingActivity.class));
+                return true;
+            } else if (id == R.id.navigation_account) {
+                startActivity(new Intent(this, RestaurantAccountActivity.class));
+                return true;
             }
+            return false;
         });
     }
 }

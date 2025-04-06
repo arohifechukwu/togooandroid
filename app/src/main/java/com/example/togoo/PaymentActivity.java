@@ -183,8 +183,9 @@ public class PaymentActivity extends AppCompatActivity {
             return;
         }
 
-        String placedTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        String placedTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
                 .format(new java.util.Date());
+        long placedMillis = System.currentTimeMillis();
 
         Map<String, Object> customerInfo = new HashMap<>();
         customerInfo.put("id", customer != null ? customer.getId() : "null");
@@ -211,6 +212,7 @@ public class PaymentActivity extends AppCompatActivity {
 
         Map<String, Object> timestamps = new HashMap<>();
         timestamps.put("placed", placedTime);
+        timestamps.put("placedMillis", placedMillis);
         timestamps.put("restaurantAccepted", "pending");
         timestamps.put("driverAssigned", "pending");
         timestamps.put("delivered", "pending");

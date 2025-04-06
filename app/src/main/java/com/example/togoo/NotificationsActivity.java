@@ -101,7 +101,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 orderLayout.addView(orderTitle);
 
                 DataSnapshot logsSnap = snapshot.child("updateLogs");
-                Map<String, List<DataSnapshot>> groupedLogs = new TreeMap<>();
+                Map<String, List<DataSnapshot>> groupedLogs = new TreeMap<>(Collections.reverseOrder());
 
                 for (DataSnapshot logSnap : logsSnap.getChildren()) {
                     String timestamp = logSnap.child("timestamp").getValue(String.class);
@@ -114,6 +114,19 @@ public class NotificationsActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                }
+
+                // Sort logs inside each date group by timestamp descending
+                for (List<DataSnapshot> logList : groupedLogs.values()) {
+                    logList.sort((a, b) -> {
+                        try {
+                            Date dateA = inputFormat.parse(a.child("timestamp").getValue(String.class));
+                            Date dateB = inputFormat.parse(b.child("timestamp").getValue(String.class));
+                            return dateB.compareTo(dateA); // latest first
+                        } catch (ParseException e) {
+                            return 0;
+                        }
+                    });
                 }
 
                 for (Map.Entry<String, List<DataSnapshot>> entry : groupedLogs.entrySet()) {
@@ -153,7 +166,7 @@ public class NotificationsActivity extends AppCompatActivity {
                     orderLayout.addView(driverBtn);
                 }
 
-                notificationsContainer.addView(orderLayout);
+                notificationsContainer.addView(orderLayout, 0);
             }
 
             @Override

@@ -53,6 +53,8 @@ public class OrderActivity extends AppCompatActivity {
                 startActivity(new Intent(this, RestaurantActivity.class));
             } else if (id == R.id.navigation_account) {
                 startActivity(new Intent(this, AccountActivity.class));
+            }else if (id == R.id.navigation_myorders) {
+                startActivity(new Intent(this, MyOrderActivity.class));
             }
             finish();
             return true;
@@ -191,7 +193,7 @@ public class OrderActivity extends AppCompatActivity {
                         complaintButton.setOnClickListener(v -> showDisputeForm(orderId));
                         finalLayout.addView(complaintButton);
 
-                        ordersContainer.addView(cardView);
+                        ordersContainer.addView(cardView, 0);
                     }
                 };
 

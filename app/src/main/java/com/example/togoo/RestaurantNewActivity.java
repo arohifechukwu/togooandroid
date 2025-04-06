@@ -219,7 +219,7 @@ public class RestaurantNewActivity extends AppCompatActivity {
         storageRef.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     String restaurantId = restaurantUID; // Using restaurantUID as the restaurant's ID
-                    FoodItem foodItem = new FoodItem(foodId, restaurantId, desc, uri.toString(), price);
+                    FoodItem foodItem = new FoodItem(foodId, desc, uri.toString(), restaurantId, price);
                     DatabaseReference ref;
                     if ("New Menu Category".equals(node) || "Update Menu Category".equals(node)) {
                         ref = restaurantRef.child("menu").child(category).child(foodId);

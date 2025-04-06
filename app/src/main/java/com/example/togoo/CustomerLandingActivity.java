@@ -557,10 +557,10 @@ public class CustomerLandingActivity extends AppCompatActivity {
             startActivity(new Intent(this, RestaurantActivity.class));
             finish();
             return true;
-//        } else if (id == R.id.navigation_browse) {
-//            startActivity(new Intent(this, BrowseActivity.class));
-//            finish();
-//            return true;
+        } else if (id == R.id.navigation_myorders) {
+            startActivity(new Intent(this, MyOrderActivity.class));
+            finish();
+            return true;
         } else if (id == R.id.navigation_order) {
             startActivity(new Intent(this, OrderActivity.class));
             finish();

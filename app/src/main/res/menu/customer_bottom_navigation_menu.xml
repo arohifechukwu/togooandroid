@@ -15,18 +15,18 @@
         android:title="Restaurants"
         android:tint="@color/primary_color" />
 
-    <!-- Browse -->
-<!--    <item-->
-<!--        android:id="@+id/navigation_browse"-->
-<!--        android:icon="@drawable/ic_browse"-->
-<!--        android:title="Browse"-->
-<!--        android:tint="@color/primary_color" />-->
+     <!-- My Orders -->
+    <item
+        android:id="@+id/navigation_myorders"
+        android:icon="@drawable/ic_browse"
+        android:title="My Orders"
+        android:tint="@color/primary_color" />
 
-    <!-- Orders -->
+    <!-- Order Summary -->
     <item
         android:id="@+id/navigation_order"
         android:icon="@drawable/ic_order"
-        android:title="Order"
+        android:title="Order Info+"
         android:tint="@color/primary_color" />
 
     <!-- Account -->

@@ -97,6 +97,47 @@
                 android:textSize="16sp"
                 android:textColor="@color/dark_gray" />
 
+            <!-- Review Section -->
+            <TextView
+                android:id="@+id/reviewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reviews"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp" />
+
+            <TextView
+                android:id="@+id/reviewSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="16dp"
+                android:text="0 reviews"
+                android:textSize="14sp"
+                android:textColor="@color/dark_gray" />
+
+            <LinearLayout
+                android:id="@+id/commentsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <TextView
+                android:id="@+id/viewMoreComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View more"
+                android:textColor="@color/primary_color"
+                android:textStyle="bold"
+                android:padding="12dp"
+                android:layout_marginStart="16dp"
+                android:visibility="gone" />
+
             <!-- Featured Items -->
             <TextView
                 android:id="@+id/featuredItemsLabel"
