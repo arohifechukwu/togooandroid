@@ -75,7 +75,11 @@
         <activity
             android:name=".PaymentActivity"
             android:exported="false" />
-        <activity
+
+        <activity android:name=".AdminReportActivity" />
+
+
+    <activity
             android:name=".CheckoutActivity"
             android:exported="false" />
         <activity
