@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/driverDeliveryRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Map Fragment -->
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Start The Trip Button -->
+    <Button
+        android:id="@+id/btnStartTrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start The Trip"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Mark As Arrived Button (hidden initially) -->
+    <Button
+        android:id="@+id/btnMarkArrived"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mark As Arrived"
+        android:visibility="gone"
+        android:layout_marginBottom="10dp"/>
+
+</LinearLayout>

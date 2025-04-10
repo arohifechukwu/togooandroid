@@ -1,26 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/landingRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".RestaurantLandingActivity">
+    android:orientation="vertical"
+    android:background="?android:colorBackground"
+    android:padding="8dp">
 
-  <!-- Welcome Text -->
   <TextView
-      android:id="@+id/welcomeText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Orders"
+      android:padding="16dp"
+      android:textSize="20sp"
+      android:textColor="@android:color/white"
+      android:background="?attr/colorPrimary"
+      android:textStyle="bold" />
+
+  <TextView
+      android:id="@+id/viewOngoingOrdersLink"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Welcome to Restaurant Landing Page"
-      android:textSize="22sp"
+      android:text="View Ongoing Orders"
+      android:textColor="@android:color/holo_orange_dark"
+      android:textSize="14sp"
+      android:padding="12dp"
       android:textStyle="bold"
-      android:textColor="@color/black"
-      android:gravity="center"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"/>
+      android:layout_marginTop="4dp"
+      android:clickable="true"
+      android:focusable="true" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+  <!-- Scrollable Orders Container -->
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:padding="4dp">
+
+    <LinearLayout
+        android:id="@+id/ordersContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle"
+        android:dividerPadding="8dp" />
+  </ScrollView>
+
+  <!-- Bottom Navigation -->
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottomNavigation"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?attr/colorSurface"
+      app:menu="@menu/restaurant_bottom_navigation_menu"
+      app:labelVisibilityMode="labeled"
+      app:itemIconTint="@color/navigation_colors"
+      app:itemTextColor="@color/navigation_colors" />
+</LinearLayout>

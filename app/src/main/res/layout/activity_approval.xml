@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    tools:context=".ApprovalActivity">
+
+    <TextView
+        android:id="@+id/adminTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pending Approvals"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/primary_color"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/noApprovalsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No pending approvals."
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_below="@id/adminTitle"
+        android:padding="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/approvalsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/adminTitle"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
+
+    <!-- Bottom Navigation (Fixed at the Bottom) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/dark_gray"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/admin_bottom_navigation_menu"/>
+
+</RelativeLayout>

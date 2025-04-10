@@ -1,26 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/light_gray"
     tools:context=".CustomerLandingActivity">
 
-    <!-- Welcome Text -->
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Customer Landing Page"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- Main Content Scroll -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="16dp"
+        android:clipToPadding="false">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <!-- 🔔 Top Bar Container: Location + Notifications + Cart -->
+            <FrameLayout
+                android:id="@+id/topBarContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:id="@+id/locationText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Fetching location..."
+                        android:textSize="16sp"
+                        android:textColor="@color/black" />
+
+                    <!-- 🔔 Notification Container -->
+                    <FrameLayout
+                        android:id="@+id/notificationContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp">
+
+                        <ImageButton
+                            android:id="@+id/notificationButton"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_notification"
+                            android:contentDescription="Notifications"
+                            android:scaleType="centerInside" />
+
+                        <TextView
+                            android:id="@+id/notificationBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|top"
+                            android:layout_marginTop="-4dp"
+                            android:layout_marginEnd="-4dp"
+                            android:minWidth="16dp"
+                            android:text="0"
+                            android:textSize="10sp"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:background="@drawable/badge_background"
+                            android:textColor="@android:color/white"
+                            android:visibility="gone"/>
+                    </FrameLayout>
+
+                    <!-- 🛒 Cart Button -->
+                    <ImageButton
+                        android:id="@+id/cartButton"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_cart"
+                        android:contentDescription="Cart" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- 🔍 Search Bar -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/searchInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:endIconMode="clear_text">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/searchBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search menu..."
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 🔍 Suggestions -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchSuggestionsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:background="@color/white"
+                android:elevation="4dp"
+                android:padding="4dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"/>
+
+            <TextView
+                android:id="@+id/viewResultsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View all results"
+                android:textColor="@color/primary_color"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:padding="8dp"/>
+
+            <!-- 🎯 Featured Categories -->
+            <TextView
+                android:id="@+id/featuredCategoriesTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Featured Categories"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="24dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/white">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/featuredCategoriesRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 🔥 Special Offers -->
+            <TextView
+                android:id="@+id/specialOffersTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Special Offers"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="24dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/white">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/specialOffersRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 🌟 Top Picks -->
+            <TextView
+                android:id="@+id/topPicksTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Top Picks"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="24dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/white">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/topPicksRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"/>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 🔻 Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/navigation_colors"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/customer_bottom_navigation_menu" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Dispute Title -->
+    <EditText
+        android:id="@+id/disputeTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Dispute Title"
+        android:inputType="textCapWords"
+        android:padding="10dp"
+        android:background="@drawable/rounded_edittext" />
+
+    <!-- Description -->
+    <EditText
+        android:id="@+id/disputeDescription"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:hint="Description"
+        android:inputType="textMultiLine"
+        android:gravity="top"
+        android:padding="10dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rounded_edittext" />
+
+    <!-- Reason -->
+    <EditText
+        android:id="@+id/disputeReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Reason"
+        android:inputType="textCapSentences"
+        android:padding="10dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rounded_edittext" />
+
+    <!-- Evidence Upload -->
+    <Button
+        android:id="@+id/uploadEvidenceButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Image"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/primary_color"
+        android:textColor="@android:color/white" />
+
+    <ImageView
+        android:id="@+id/evidencePreview"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:background="@drawable/image_border" />
+</LinearLayout>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/aboutUsTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="About Togoo"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFA500"
+            android:gravity="center"
+            android:paddingBottom="16dp"/>
+
+        <!-- Our Mission -->
+        <TextView
+            android:id="@+id/missionTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our Mission"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFA500"
+            android:paddingBottom="8dp"/>
+        <TextView
+            android:id="@+id/missionDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="At Togoo, our mission is to deliver an exceptional and seamless ordering experience to our customers. We combine technology with outstanding customer service to provide fast, reliable, and secure ways to order food and manage your deliveries or pickups."
+            android:textSize="16sp"
+            android:textColor="#FFA500"
+            android:paddingBottom="16dp"/>
+
+        <!-- Our Vision -->
+        <TextView
+            android:id="@+id/visionTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our Vision"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFA500"
+            android:paddingBottom="8dp"/>
+        <TextView
+            android:id="@+id/visionDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="We envision a future where ordering food is completely hassle-free. By embracing innovation and cutting-edge technology, we strive to be the leading platform in food ordering and delivery, making every interaction simple and enjoyable."
+            android:textSize="16sp"
+            android:textColor="#FFA500"
+            android:paddingBottom="16dp"/>
+
+        <!-- Our Story -->
+        <TextView
+            android:id="@+id/historyTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our Story"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFA500"
+            android:paddingBottom="8dp"/>
+        <TextView
+            android:id="@+id/historyDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Founded in 20XX, Togoo began as a small venture dedicated to simplifying the food ordering process. Over the years, our commitment to quality and innovation has helped us grow into a comprehensive platform that meets the evolving needs of our customers."
+            android:textSize="16sp"
+            android:textColor="#FFA500"
+            android:paddingBottom="16dp"/>
+
+        <!-- Our Team -->
+        <TextView
+            android:id="@+id/teamTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our Team"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFA500"
+            android:paddingBottom="8dp"/>
+        <TextView
+            android:id="@+id/teamDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Our team is made up of dedicated professionals from diverse backgrounds, all working together to deliver the best possible ordering experience. Every team member plays a crucial role in making Togoo a success."
+            android:textSize="16sp"
+            android:textColor="#FFA500"
+            android:paddingBottom="16dp"/>
+
+        <!-- Contact Us -->
+        <TextView
+            android:id="@+id/contactTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Contact Us"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFA500"
+            android:paddingBottom="8dp"/>
+        <TextView
+            android:id="@+id/contactDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Have questions or feedback? Reach out to us via email at support@togoo.com or call us at 1-800-TOGOO. We are here to help and look forward to hearing from you."
+            android:textSize="16sp"
+            android:textColor="#FFA500"
+            android:paddingBottom="16dp"/>
+
+        <!-- Closing Statement -->
+        <TextView
+            android:id="@+id/closingTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thank you for choosing Togoo. We are committed to serving you and continuously improving your experience."
+            android:textSize="16sp"
+            android:textColor="#FFA500"
+            android:paddingBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>

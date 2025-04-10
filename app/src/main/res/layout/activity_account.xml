@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".SettingsActivity">
+
+    <!-- ✅ Title Bar -->
+    <TextView
+        android:id="@+id/settingTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Account Dashboard"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/primary_color"
+        android:textColor="@color/white" />
+
+    <!-- ✅ Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Profile -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardProfile"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <ImageView
+                        android:src="@drawable/ic_profile"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="Profile"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Notifications -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardNotifications"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <ImageView
+                        android:src="@drawable/ic_notifications"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="Notifications"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- About Us -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAboutUs"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <ImageView
+                        android:src="@drawable/ic_info"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="About Us"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- FAQ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFAQ"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <ImageView
+                        android:src="@drawable/ic_faq"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="FAQ"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Language -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLanguage"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <ImageView
+                        android:src="@drawable/ic_language"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="Language"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Theme Switch -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTheme"
+                style="@style/SettingCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:src="@drawable/ic_dark_mode"
+                        style="@style/SettingIcon"/>
+
+                    <TextView
+                        android:text="Dark Mode"
+                        style="@style/SettingText"
+                        android:layout_weight="1"/>
+
+                    <Switch
+                        android:id="@+id/switchTheme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Logout -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLogout"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <ImageView
+                        android:src="@drawable/ic_logout"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="Logout"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation (Fixed at the Bottom) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/dark_gray"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/customer_bottom_navigation_menu"/>
+</LinearLayout>

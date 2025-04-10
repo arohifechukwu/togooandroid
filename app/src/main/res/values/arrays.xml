@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="business_types">
+        <item>restaurant</item>
+        <item>driver</item>
+    </string-array>
+
+    //order filters
+    <string-array name="order_filters">
+        <item>Order ID</item>
+        <item>Customer</item>
+        <item>Status</item>
+        <item>Timestamp</item>
+    </string-array>
+
+</resources>

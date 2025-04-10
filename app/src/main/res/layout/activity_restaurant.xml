@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+
+    <!-- NestedScrollView updated with bottom padding and clipToPadding disabled -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="56dp">  <!-- Adjust this value if your bottom nav is taller -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Top Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Restaurants"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <ImageButton
+                    android:id="@+id/cartButton"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_cart"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Cart"/>
+            </LinearLayout>
+
+            <!-- Search Bar -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/searchInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:endIconMode="clear_text">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/searchBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search menu..."
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Search Suggestions -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchSuggestionsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:visibility="gone"/>
+
+            <!-- View All Results Button -->
+            <TextView
+                android:id="@+id/viewResultsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_color"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Featured Categories Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/featuredCategoriesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Restaurant Grid Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Restaurants Near You"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="24dp"/>
+
+            <!-- Restaurant Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/restaurantGridRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Navigation Bar (Remains outside the scroll container) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/navigation_colors"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/customer_bottom_navigation_menu"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

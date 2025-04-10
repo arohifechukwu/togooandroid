@@ -1,26 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".AdminLandingActivity">
+    tools:context=".AdminLandingActivity"
+    android:background="@color/light_gray">
 
-    <!-- Welcome Text -->
+    <!-- Admin Title -->
     <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="wrap_content"
+        android:id="@+id/adminTitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome to Admin Landing Page"
-        android:textSize="22sp"
+        android:text="Admin Dashboard"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:padding="16dp"
+        android:background="@color/primary_color"
+        android:textColor="@color/white"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- "No Records Found" Text (Initially Hidden) -->
+    <TextView
+        android:id="@+id/noRecordsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No records found"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_below="@id/adminTitle"
+        android:layout_centerHorizontal="true"
+        android:padding="20dp"/>
+
+    <!-- Material CardView for RecyclerView -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_below="@id/adminTitle"
+        android:layout_above="@id/bottomNavigation"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:strokeColor="@color/primary_variant"
+        app:strokeWidth="1dp"
+        android:backgroundTint="@color/white">
+
+        <!-- RecyclerView for Approved Users -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/usersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bottom Navigation (Fixed at the Bottom) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/dark_gray"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/admin_bottom_navigation_menu"/>
+</RelativeLayout>

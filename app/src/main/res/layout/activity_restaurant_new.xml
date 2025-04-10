@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- 🔹 Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Food Item"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:padding="16dp"
+        android:gravity="center"
+        android:background="@color/primary_color"
+        android:textColor="@android:color/white" />
+
+    <!-- 🔸 Scrollable Form -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Spinner for Node Selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Section"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/nodeSelector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Food ID -->
+            <EditText
+                android:id="@+id/foodIdInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Food ID"
+                android:inputType="text"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Description -->
+            <EditText
+                android:id="@+id/descriptionInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Price -->
+            <EditText
+                android:id="@+id/priceInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Price (e.g. 12.50)"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Food Category (for 'menu' selection only) -->
+            <EditText
+                android:id="@+id/categoryInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Food Category (for 'menu')"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
+
+            <!-- Label for categoryDropdown -->
+            <TextView
+                android:id="@+id/categoryDropdownLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Existing Category"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone" />
+
+            <!-- Dropdown (for 'menu Categories' selection only) -->
+            <Spinner
+                android:id="@+id/categoryDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
+
+            <!-- Image Preview -->
+            <ImageView
+                android:id="@+id/foodImageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_food_placeholder"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Pick Image -->
+            <Button
+                android:id="@+id/pickImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick Image" />
+
+            <!-- Submit -->
+            <Button
+                android:id="@+id/createFoodButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create Food Item"
+                android:layout_marginTop="20dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 🔻 Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:itemIconTint="@color/navigation_colors"
+        app:itemTextColor="@color/navigation_colors"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/restaurant_bottom_navigation_menu" />
+</LinearLayout>
