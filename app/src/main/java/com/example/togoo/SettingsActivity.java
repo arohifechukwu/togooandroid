@@ -8,13 +8,13 @@ import android.widget.Switch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import com.example.togoo.R;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private MaterialCardView profileCard, notificationsCard, aboutUsCard, faqCard, languageCard, logoutCard;
+    private MaterialCardView profileCard, notificationsCard, aboutUsCard, faqCard, languageCard, reportCard, logoutCard;
     private Switch themeSwitch;
     private BottomNavigationView bottomNavigationView;
 
@@ -39,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
         aboutUsCard = findViewById(R.id.cardAboutUs);
         faqCard = findViewById(R.id.cardFAQ);
         languageCard = findViewById(R.id.cardLanguage);
+        // Initialize the new My Report card
+        reportCard = findViewById(R.id.cardMyReport);
         logoutCard = findViewById(R.id.cardLogout); // ✅ Logout button
         themeSwitch = findViewById(R.id.switchTheme);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -69,6 +71,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         languageCard.setOnClickListener(view -> {
             startActivity(new Intent(this, LanguageActivity.class));
+            overridePendingTransition(0, 0);
+        });
+
+        // Navigate to the My Report page
+        reportCard.setOnClickListener(view -> {
+            // Change AdminReportsActivity to your desired report activity if needed.
+            startActivity(new Intent(this, AdminReportActivity.class));
             overridePendingTransition(0, 0);
         });
 

@@ -106,6 +106,21 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- My Report -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMyReport"
+                style="@style/SettingCard">
+                <LinearLayout style="@style/SettingItem">
+                    <!-- Make sure you have an icon named "ic_report" in your drawables or change to a valid drawable -->
+                    <ImageView
+                        android:src="@drawable/ic_report"
+                        style="@style/SettingIcon" />
+                    <TextView
+                        android:text="Reports"
+                        style="@style/SettingText" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Theme Switch -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTheme"
